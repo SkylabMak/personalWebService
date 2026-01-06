@@ -20,3 +20,6 @@ Thumbs.db
 
 # SQLx (if using offline mode)
 .sqlx/
+
+# output
+.output_stucture.txt
