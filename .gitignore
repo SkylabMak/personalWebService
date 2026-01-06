@@ -1,0 +1,22 @@
+# Rust specific
+/target
+Cargo.lock.bak
+**/*.rs.bk
+
+# Environment variables
+.env
+.env.*
+!.env.example
+
+# IDE - IntelliJ/RustRover/CLion
+.idea/
+
+# IDE - VS Code
+.vscode/
+
+# OS specific
+.DS_Store
+Thumbs.db
+
+# SQLx (if using offline mode)
+.sqlx/
