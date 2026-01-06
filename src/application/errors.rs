@@ -12,6 +12,12 @@ pub enum ApplicationError {
     },
     Unauthorized,
     Forbidden,
+    Conflict {
+        message: String,
+    },
+    Internal {
+        message: String,
+    },
     Unexpected {
         message: String,
     },
@@ -32,6 +38,12 @@ impl Display for ApplicationError {
             ApplicationError::Forbidden => {
                 write!(f, "Forbidden")
             }
+            ApplicationError::Conflict { message } => {
+                write!(f, "Conflict: {}", message)
+            }
+            ApplicationError::Internal { message } => {
+                write!(f, "Internal error: {}", message)
+            }
             ApplicationError::Unexpected { message } => {
                 write!(f, "Unexpected error: {}", message)
             }
@@ -40,3 +52,18 @@ impl Display for ApplicationError {
 }
 
 impl std::error::Error for ApplicationError {}
+
+pub trait MapToApplicationError<T> {
+    fn map_app_err(self, message: &str) -> Result<T, ApplicationError>;
+}
+
+impl<T, E: std::fmt::Debug> MapToApplicationError<T> for Result<T, E> {
+    fn map_app_err(self, message: &str) -> Result<T, ApplicationError> {
+        self.map_err(|e| {
+            tracing::error!("{}: {:?}", message, e);
+            ApplicationError::Internal {
+                message: message.to_string(),
+            }
+        })
+    }
+}

@@ -1,9 +1,9 @@
 use crate::application::services::profile::life_status::service::GetCurrentLifeStatusService;
 use crate::infrastructure::repositories::Repositories;
-use crate::infrastructure::repository_impl::profile::life_status::mysql_life_status_repo::MySqlLifeStatusRepository;
+use crate::infrastructure::repository_impl::profile::life_status::repository::LifeStatusRepositoryImpl;
 
 pub struct ProfileServices {
-    pub life_status: GetCurrentLifeStatusService<MySqlLifeStatusRepository>,
+    pub life_status: GetCurrentLifeStatusService<LifeStatusRepositoryImpl>,
 }
 
 impl ProfileServices {

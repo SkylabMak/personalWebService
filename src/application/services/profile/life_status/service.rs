@@ -1,7 +1,8 @@
 use async_trait::async_trait;
 
-use crate::application::errors::ApplicationError;
+use crate::application::errors::{ApplicationError, MapToApplicationError};
 use crate::application::use_cases::use_case::UseCase;
+use crate::application::use_cases::profile::life_status::dto::input::GetLifeStatusInput;
 use crate::interface_adapters::gateways::repositories::profile::life_status::life_status_repository::LifeStatusRepository;
 use super::result::LifeStatusResult;
 
@@ -26,21 +27,21 @@ impl<R> UseCase for GetCurrentLifeStatusService<R>
 where
     R: LifeStatusRepository + Send + Sync,
 {
-    type Input = String;
+    type Input = GetLifeStatusInput;
     type Output = LifeStatusResult;
     type Error = ApplicationError;
 
-    async fn execute(&self, profile_id: Self::Input) -> Result<Self::Output, Self::Error> {
+    async fn execute(&self, input: Self::Input) -> Result<Self::Output, Self::Error> {
+        input.validate().map_err(|e| ApplicationError::ValidationError { message: e })?;
+
         let data = self
             .repository
-            .find_current_by_profile_id(&profile_id)
+            .find_current_by_profile_id(&input.profile_id)
             .await
-            .map_err(|_| ApplicationError::Unexpected {
-                message: "Failed to fetch life status".to_string(),
-            })?
+            .map_app_err("Failed to fetch life status")?
             .ok_or_else(|| ApplicationError::NotFound {
                 resource: "LifeStatus",
-                identifier: profile_id,
+                identifier: input.profile_id,
             })?;
 
         Ok(LifeStatusResult {

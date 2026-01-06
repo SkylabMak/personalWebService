@@ -1,14 +1,15 @@
+use crate::domain::entities::profile::life_status::life_status::LifeStatus;
 use crate::infrastructure::db::mysql::common::mysql_repository::MySqlRepository;
 use crate::interface_adapters::gateways::common::repository_error::RepositoryError;
-use crate::interface_adapters::gateways::repositories::profile::life_status::life_status_repository::{LifeStatusData, LifeStatusRepository};
+use crate::interface_adapters::gateways::repositories::profile::life_status::life_status_repository::{LifeStatusRepository};
 use async_trait::async_trait;
 
 #[derive(Clone)]
-pub struct MySqlLifeStatusRepository {
+pub struct LifeStatusRepositoryImpl {
     mysql: MySqlRepository,
 }
 
-impl MySqlLifeStatusRepository {
+impl LifeStatusRepositoryImpl {
     pub fn new(mysql: MySqlRepository) -> Self {
         Self { mysql }
     }
@@ -16,11 +17,11 @@ impl MySqlLifeStatusRepository {
 
 
 #[async_trait]
-impl LifeStatusRepository for MySqlLifeStatusRepository {
+impl LifeStatusRepository for LifeStatusRepositoryImpl {
     async fn find_current_by_profile_id(
         &self,
         profile_id: &str,
-    ) -> Result<Option<LifeStatusData>, RepositoryError> {
+    ) -> Result<Option<LifeStatus>, RepositoryError> {
         let row = sqlx::query!(
             r#"
             SELECT
@@ -40,7 +41,7 @@ impl LifeStatusRepository for MySqlLifeStatusRepository {
             .map_err(|e| RepositoryError::DatabaseError(e.to_string()))?;
 
         // println!("profile_id is, {}!", profile_id);
-        Ok(row.map(|r| LifeStatusData {
+        Ok(row.map(|r| LifeStatus {
             name: r.name,
             description: r.description,
             color_token: r.color_token,

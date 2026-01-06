@@ -1,0 +1,285 @@
+
+    Directory: C:\Users\prisa\Desktop\personalWebsite\rust-backend\src
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+d-----          1/6/2026   9:46 AM                application
+d-----          1/6/2026   9:40 AM                config
+d-----          1/6/2026   9:46 AM                delivery
+d-----        12/25/2025   8:31 AM                domain
+da----          1/6/2026   9:26 AM                infrastructure
+d-----          1/5/2026   9:32 AM                interface_adapters
+d-----        12/25/2025   8:19 AM                shared
+-a----          1/6/2026   9:40 AM           1116 app.rs
+-a----          1/6/2026   9:47 AM           1018 main.rs
+    Directory:
+    C:\Users\prisa\Desktop\personalWebsite\rust-backend\src\application
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+d-----          1/6/2026   9:07 AM                services
+d-----          1/6/2026   8:43 AM                use_cases
+-a----          1/6/2026   9:46 AM           1178 errors.rs
+-a----          1/5/2026   9:23 AM             68 mod.rs
+    Directory: C:\Users\prisa\Desktop\personalWebsite\rust-backend\src\applicat
+    ion\services
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+d-----          1/6/2026   9:26 AM                profile
+-a----          1/6/2026   8:49 AM             35 mod.rs
+-a----          1/6/2026   9:07 AM            372 services.rs
+    Directory: C:\Users\prisa\Desktop\personalWebsite\rust-backend\src\applicat
+    ion\services\profile
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+d-----          1/6/2026   9:36 AM                life_status
+-a----          1/6/2026   8:49 AM             49 mod.rs
+-a----          1/6/2026   9:26 AM            588 profile_services.rs
+    Directory: C:\Users\prisa\Desktop\personalWebsite\rust-backend\src\applicat
+    ion\services\profile\life_status
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a----          1/6/2026   8:49 AM             33 mod.rs
+-a----          1/6/2026   9:36 AM            623 result.rs
+-a----          1/5/2026  10:34 AM           1486 service.rs
+    Directory: C:\Users\prisa\Desktop\personalWebsite\rust-backend\src\applicat
+    ion\use_cases
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+d-----          1/6/2026   9:07 AM                profile
+-a----          1/6/2026   8:43 AM             37 mod.rs
+-a----          1/5/2026  10:35 AM            214 use_case.rs
+    Directory: C:\Users\prisa\Desktop\personalWebsite\rust-backend\src\applicat
+    ion\use_cases\profile
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+d-----          1/6/2026   9:11 AM                life_status
+-a----          1/6/2026   8:47 AM             50 mod.rs
+-a----          1/6/2026   9:07 AM            298 profile_use_cases.rs
+    Directory: C:\Users\prisa\Desktop\personalWebsite\rust-backend\src\applicat
+    ion\use_cases\profile\life_status
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a----          1/6/2026   9:11 AM            583 mod.rs
+    Directory: C:\Users\prisa\Desktop\personalWebsite\rust-backend\src\config
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a----          1/6/2026   9:40 AM            349 config.rs
+-a----          1/6/2026   8:00 AM             17 mod.rs
+    Directory: C:\Users\prisa\Desktop\personalWebsite\rust-backend\src\delivery
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+d-----          1/6/2026   9:45 AM                http
+-a----          1/6/2026   9:46 AM             20 mod.rs
+    Directory:
+    C:\Users\prisa\Desktop\personalWebsite\rust-backend\src\delivery\http
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+d-----        12/25/2025   8:29 AM                middleware
+d-----          1/5/2026  10:28 AM                routes
+d-----          1/6/2026   9:43 AM                server
+-a----          1/6/2026   9:45 AM             45 mod.rs
+    Directory: C:\Users\prisa\Desktop\personalWebsite\rust-backend\src\delivery
+    \http\middleware
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a----        12/25/2025   8:29 AM              0 jwt_auth.rs
+-a----        12/25/2025   8:29 AM             32 mod.rs
+-a----        12/25/2025   8:29 AM              0 public_guard.rs
+    Directory: C:\Users\prisa\Desktop\personalWebsite\rust-backend\src\delivery
+    \http\routes
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+d-----          1/6/2026   9:07 AM                public
+-a----          1/5/2026  10:28 AM             29 mod.rs
+-a----        12/25/2025   8:28 AM              0 private.rs
+    Directory: C:\Users\prisa\Desktop\personalWebsite\rust-backend\src\delivery
+    \http\routes\public
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a----          1/5/2026  10:28 AM             15 mod.rs
+-a----          1/6/2026   9:07 AM            408 public.rs
+    Directory: C:\Users\prisa\Desktop\personalWebsite\rust-backend\src\delivery
+    \http\server
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a----          1/5/2026  11:00 AM             31 mod.rs
+-a----          1/6/2026   9:40 AM            564 server.rs
+-a----          1/6/2026   9:07 AM            160 state.rs
+    Directory: C:\Users\prisa\Desktop\personalWebsite\rust-backend\src\domain
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+d-----        12/25/2025   8:30 AM                entities
+d-----        12/25/2025   8:31 AM                rules
+-a----        12/25/2025   8:31 AM             10 mod.rs
+    Directory:
+    C:\Users\prisa\Desktop\personalWebsite\rust-backend\src\domain\entities
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a----        12/25/2025   8:30 AM              0 entities.rs
+    Directory:
+    C:\Users\prisa\Desktop\personalWebsite\rust-backend\src\domain\rules
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a----        12/25/2025   8:31 AM              0 mod.rs
+    Directory:
+    C:\Users\prisa\Desktop\personalWebsite\rust-backend\src\infrastructure
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+d-----        12/25/2025   8:33 AM                analytics
+da----          1/6/2026   9:13 AM                db
+d-----          1/6/2026   9:26 AM                repositories
+da----          1/5/2026   7:56 AM                repository_impl
+-a----          1/6/2026   9:13 AM           1494 infrastructure.rs
+-a----          1/6/2026   8:13 AM            115 mod.rs
+-a----          1/6/2026   9:26 AM            395 repositories.rs
+    Directory: C:\Users\prisa\Desktop\personalWebsite\rust-backend\src\infrastr
+    ucture\analytics
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a----        12/25/2025   8:33 AM             20 mod.rs
+-a----        12/25/2025   8:33 AM              0 visitor_tracker.rs
+    Directory:
+    C:\Users\prisa\Desktop\personalWebsite\rust-backend\src\infrastructure\db
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+da----          1/6/2026   8:05 AM                mysql
+-a----          1/6/2026   9:13 AM            528 databases.rs
+-a----          1/6/2026   9:13 AM             43 mod.rs
+    Directory: C:\Users\prisa\Desktop\personalWebsite\rust-backend\src\infrastr
+    ucture\db\mysql
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+d-----          1/6/2026   9:45 AM                common
+-a----          1/6/2026   8:05 AM             38 mod.rs
+-a----          1/6/2026   8:05 AM            360 setup.rs
+    Directory: C:\Users\prisa\Desktop\personalWebsite\rust-backend\src\infrastr
+    ucture\db\mysql\common
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a----          1/5/2026   7:58 AM             32 mod.rs
+-a----          1/6/2026   9:45 AM            270 mysql_repository.rs
+    Directory: C:\Users\prisa\Desktop\personalWebsite\rust-backend\src\infrastr
+    ucture\repositories
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+d-----          1/6/2026   9:26 AM                profile
+    Directory: C:\Users\prisa\Desktop\personalWebsite\rust-backend\src\infrastr
+    ucture\repositories\profile
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a----          1/6/2026   9:26 AM             31 mod.rs
+-a----          1/6/2026   9:26 AM            447 profile_repositories.rs
+    Directory: C:\Users\prisa\Desktop\personalWebsite\rust-backend\src\infrastr
+    ucture\repository_impl
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+d-----        12/25/2025  11:28 AM                profile
+-a----        12/25/2025  11:28 AM             23 mod.rs
+    Directory: C:\Users\prisa\Desktop\personalWebsite\rust-backend\src\infrastr
+    ucture\repository_impl\profile
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+da----          1/6/2026   8:54 AM                life_status
+-a----        12/25/2025  11:28 AM             27 mod.rs
+    Directory: C:\Users\prisa\Desktop\personalWebsite\rust-backend\src\infrastr
+    ucture\repository_impl\profile\life_status
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a----        12/25/2025  11:14 AM             38 mod.rs
+-a----          1/6/2026   8:54 AM           1522 mysql_life_status_repo.rs
+    Directory:
+    C:\Users\prisa\Desktop\personalWebsite\rust-backend\src\interface_adapters
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+d-----          1/6/2026   9:46 AM                gateways
+d-----          1/5/2026   9:49 AM                http
+-a----          1/5/2026   9:32 AM             39 mod.rs
+    Directory: C:\Users\prisa\Desktop\personalWebsite\rust-backend\src\interfac
+    e_adapters\gateways
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+d-----          1/6/2026   9:46 AM                common
+d-----          1/5/2026   8:01 AM                repositories
+-a----          1/6/2026   9:45 AM             52 mod.rs
+    Directory: C:\Users\prisa\Desktop\personalWebsite\rust-backend\src\interfac
+    e_adapters\gateways\common
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a----        12/25/2025  11:04 AM             32 mod.rs
+-a----          1/6/2026   9:46 AM            113 repository_error.rs
+    Directory: C:\Users\prisa\Desktop\personalWebsite\rust-backend\src\interfac
+    e_adapters\gateways\repositories
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+da----          1/5/2026   8:03 AM                profile
+-a----          1/5/2026   8:01 AM             23 mod.rs
+    Directory: C:\Users\prisa\Desktop\personalWebsite\rust-backend\src\interfac
+    e_adapters\gateways\repositories\profile
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+d-----          1/6/2026   9:11 AM                life_status
+-a----          1/5/2026   8:03 AM             27 mod.rs
+    Directory: C:\Users\prisa\Desktop\personalWebsite\rust-backend\src\interfac
+    e_adapters\gateways\repositories\profile\life_status
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a----          1/6/2026   9:11 AM            466 life_status_repository.rs
+-a----          1/5/2026   8:03 AM             38 mod.rs
+    Directory: C:\Users\prisa\Desktop\personalWebsite\rust-backend\src\interfac
+    e_adapters\http
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+d-----          1/6/2026   8:43 AM                controllers
+d-----          1/6/2026   8:44 AM                presenters
+-a----          1/5/2026   9:49 AM             48 mod.rs
+    Directory: C:\Users\prisa\Desktop\personalWebsite\rust-backend\src\interfac
+    e_adapters\http\controllers
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+d-----          1/6/2026   8:43 AM                profile
+-a----          1/6/2026   8:43 AM             16 mod.rs
+    Directory: C:\Users\prisa\Desktop\personalWebsite\rust-backend\src\interfac
+    e_adapters\http\controllers\profile
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+d-----          1/6/2026   9:07 AM                life_status
+-a----          1/6/2026   8:43 AM             22 mod.rs
+    Directory: C:\Users\prisa\Desktop\personalWebsite\rust-backend\src\interfac
+    e_adapters\http\controllers\profile\life_status
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a----          1/6/2026   9:07 AM            819 controller.rs
+-a----          1/5/2026   9:50 AM             19 mod.rs
+    Directory: C:\Users\prisa\Desktop\personalWebsite\rust-backend\src\interfac
+    e_adapters\http\presenters
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+d-----          1/6/2026   9:40 AM                common
+d-----          1/6/2026   8:44 AM                profile
+-a----          1/6/2026   8:44 AM             33 mod.rs
+    Directory: C:\Users\prisa\Desktop\personalWebsite\rust-backend\src\interfac
+    e_adapters\http\presenters\common
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a----          1/6/2026   9:36 AM            737 api_response.rs
+-a----          1/6/2026   9:36 AM           1350 error_presenter.rs
+-a----          1/6/2026   9:40 AM            426 fallback_handler.rs
+-a----          1/6/2026   9:40 AM            125 mod.rs
+-a----          1/6/2026   9:40 AM            737 panic_handler.rs
+-a----          1/5/2026   9:07 AM            119 presenter_output.rs
+    Directory: C:\Users\prisa\Desktop\personalWebsite\rust-backend\src\interfac
+    e_adapters\http\presenters\profile
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+d-----          1/5/2026   9:24 AM                life_status
+-a----          1/6/2026   8:44 AM             22 mod.rs
+    Directory: C:\Users\prisa\Desktop\personalWebsite\rust-backend\src\interfac
+    e_adapters\http\presenters\profile\life_status
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a----          1/5/2026   9:24 AM             18 mod.rs
+-a----          1/5/2026   9:14 AM            568 presenter.rs
+    Directory: C:\Users\prisa\Desktop\personalWebsite\rust-backend\src\shared
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a----        12/25/2025   8:19 AM              0 errors.rs
+-a----        12/25/2025   8:19 AM             11 mod.rs

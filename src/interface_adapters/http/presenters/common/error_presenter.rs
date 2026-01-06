@@ -21,6 +21,12 @@ impl ErrorPresenter {
             ApplicationError::Forbidden => {
                 (StatusCode::FORBIDDEN, "FORBIDDEN", "Forbidden".to_string())
             }
+            ApplicationError::Conflict { message } => {
+                (StatusCode::CONFLICT, "CONFLICT", message)
+            }
+            ApplicationError::Internal { message } => {
+                (StatusCode::INTERNAL_SERVER_ERROR, "INTERNAL_ERROR", message)
+            }
             ApplicationError::Unexpected { message } => {
                 (StatusCode::INTERNAL_SERVER_ERROR, "INTERNAL_SERVER_ERROR", message)
             }

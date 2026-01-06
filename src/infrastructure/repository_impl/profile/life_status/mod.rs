@@ -1,1 +1,1 @@
-pub(crate) mod mysql_life_status_repo;
+pub(crate) mod repository;
