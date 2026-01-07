@@ -3,7 +3,7 @@ use axum::response::{IntoResponse, Response};
 use crate::application::use_cases::profile::life_status::dto::input::GetLifeStatusInput;
 use crate::application::use_cases::use_case::UseCase;
 use crate::delivery::http::server::state::AppState;
-use crate::interface_adapters::http::presenters::profile::life_status::presenter::LifeStatusPresenter;
+use crate::interface_adapters::http::v1::presenters::profile::life_status::presenter::LifeStatusPresenter;
 
 
 pub async fn get_current_life_status_ctrl(

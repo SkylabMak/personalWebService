@@ -2,7 +2,7 @@ use axum::http::StatusCode;
 use axum::response::IntoResponse;
 use axum::Json;
 use crate::application::errors::ApplicationError;
-use crate::interface_adapters::http::presenters::common::api_response::ApiResponse;
+use crate::interface_adapters::http::v1::presenters::common::api_response::ApiResponse;
 
 pub struct ErrorPresenter;
 

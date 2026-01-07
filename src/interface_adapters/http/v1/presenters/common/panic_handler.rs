@@ -2,7 +2,7 @@ use std::any::Any;
 use axum::http::StatusCode;
 use axum::response::{IntoResponse, Response};
 use axum::Json;
-use crate::interface_adapters::http::presenters::common::api_response::ApiResponse;
+use crate::interface_adapters::http::v1::presenters::common::api_response::ApiResponse;
 
 pub fn handle_panic(err: Box<dyn Any + Send + 'static>) -> Response {
     let details = if let Some(s) = err.downcast_ref::<&str>() {

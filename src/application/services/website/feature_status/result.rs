@@ -4,13 +4,21 @@ use crate::interface_adapters::http::v1::presenters::common::presenter_output::P
 use crate::interface_adapters::http::v1::presenters::common::api_response::ApiResponse;
 
 #[derive(Debug, Clone, Serialize)]
-pub struct LifeStatusResult {
-    pub name: String,
-    pub description: Option<String>,
-    pub color_token: String,
+pub struct FeatureStatusResult {
+    pub feature_code: String,
+    pub feature_name: String,
+    pub status_name: String,
+    pub is_closed: bool,
+    pub updated_at: String,
+    pub note: Option<String>,
 }
 
-impl PresenterOutput for LifeStatusResult {
+#[derive(Debug, Clone, Serialize)]
+pub struct WebsiteFeatureStatusesResult {
+    pub features: Vec<FeatureStatusResult>,
+}
+
+impl PresenterOutput for WebsiteFeatureStatusesResult {
     fn into_response(self) -> impl IntoResponse {
         (
             axum::http::StatusCode::OK,

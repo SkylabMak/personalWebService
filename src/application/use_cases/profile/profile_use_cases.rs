@@ -1,3 +1,4 @@
+use crate::application::services::profile::profile_services::ProfileServices;
 use crate::application::use_cases::profile::life_status::LifeStatusUseCases;
 
 #[derive(Clone)]
@@ -6,7 +7,8 @@ pub struct ProfileUseCases {
 }
 
 impl ProfileUseCases {
-    pub fn new(life_status: LifeStatusUseCases) -> Self {
+    pub fn new(services: ProfileServices) -> Self {
+        let life_status = LifeStatusUseCases::new(services.life_status);
         Self { life_status }
     }
 }

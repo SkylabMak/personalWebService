@@ -1,12 +1,12 @@
 use axum::response::IntoResponse;
 
 use crate::application::errors::ApplicationError;
-use crate::interface_adapters::http::presenters::common::error_presenter::ErrorPresenter;
-use crate::interface_adapters::http::presenters::common::presenter_output::PresenterOutput;
+use crate::interface_adapters::http::v1::presenters::common::error_presenter::ErrorPresenter;
+use crate::interface_adapters::http::v1::presenters::common::presenter_output::PresenterOutput;
 
-pub struct LifeStatusPresenter;
+pub struct WebsitePresenter;
 
-impl LifeStatusPresenter {
+impl WebsitePresenter {
     pub fn success<T: PresenterOutput>(result: T) -> impl IntoResponse {
         result.into_response()
     }
