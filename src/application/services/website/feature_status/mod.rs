@@ -1,12 +1,12 @@
 use service::GetWebsiteFeatureStatusService;
 use crate::infrastructure::repositories::Repositories;
-use crate::infrastructure::repository_impl::website::feature_status::repository::WebsiteRepositoryImpl;
+use crate::infrastructure::repository_impl::application::feature_status::repository::AppRepositoryImpl;
 
 pub mod result;
 pub mod service;
 
 pub struct FeatureStatusServices {
-    pub get_feature_status: GetWebsiteFeatureStatusService<WebsiteRepositoryImpl>,
+    pub get_feature_status: GetWebsiteFeatureStatusService<AppRepositoryImpl>,
 }
 
 impl FeatureStatusServices {

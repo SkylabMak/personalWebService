@@ -1,0 +1,29 @@
+[Unit]
+Description=Rust Backend Service
+After=network-online.target mysql.service
+Wants=network-online.target
+
+
+[Service]
+Type=simple
+User=rustuser
+Group=rustuser
+WorkingDirectory=/var/www/rust-backend
+ExecStart=/var/www/rust-backend/target/release/rust-backend
+
+EnvironmentFile=/etc/rust-backend/env
+
+Restart=on-failure
+RestartSec=5
+Environment=RUST_LOG=info
+
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+ProtectHome=true
+
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

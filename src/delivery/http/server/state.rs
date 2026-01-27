@@ -1,6 +1,6 @@
 use crate::application::services::services::Services;
 use crate::application::use_cases::profile::profile_use_cases::ProfileUseCases;
-use crate::application::use_cases::website::WebsiteUseCases;
+use crate::application::use_cases::application::WebsiteUseCases;
 
 #[derive(Clone)]
 pub struct AppState {
