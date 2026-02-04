@@ -1,10 +1,12 @@
 use crate::application::services::profile::profile_services::ProfileServices;
 use crate::application::services::website::website_services::WebsiteServices;
+use crate::application::services::auth::auth_services::AuthServices;
 use crate::infrastructure::infrastructure::Infrastructure;
 
 pub struct Services {
     pub profile: ProfileServices,
     pub website: WebsiteServices,
+    pub auth: AuthServices,
 }
 
 impl Services {
@@ -12,6 +14,7 @@ impl Services {
         Self {
             profile: ProfileServices::new(&infra.repositories),
             website: WebsiteServices::new(&infra.repositories),
+            auth: AuthServices::new(&infra.repositories, &infra.config),
         }
     }
 }

@@ -1,11 +1,13 @@
 use crate::application::services::services::Services;
 use crate::application::use_cases::profile::profile_use_cases::ProfileUseCases;
 use crate::application::use_cases::application::WebsiteUseCases;
+use crate::application::use_cases::auth::AuthUseCases;
 
 #[derive(Clone)]
 pub struct AppState {
     pub profile: ProfileUseCases,
     pub website: WebsiteUseCases,
+    pub auth: AuthUseCases,
 }
 
 impl AppState {
@@ -13,6 +15,7 @@ impl AppState {
         Self {
             profile: ProfileUseCases::new(services.profile),
             website: WebsiteUseCases::new(services.website),
+            auth: AuthUseCases::new(services.auth),
         }
     }
 }

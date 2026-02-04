@@ -5,6 +5,7 @@ pub mod interface_adapters;
 pub mod application;
 pub mod app;
 pub mod config;
+pub mod shared;
 
 use dotenvy::dotenv;
 use tokio::net::TcpListener;

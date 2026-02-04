@@ -1,4 +1,5 @@
 use std::fmt::{Display, Formatter};
+use axum::response::IntoResponse;
 
 #[derive(Debug, Clone)]
 #[allow(dead_code)]
@@ -52,6 +53,12 @@ impl Display for ApplicationError {
 }
 
 impl std::error::Error for ApplicationError {}
+
+impl IntoResponse for ApplicationError {
+    fn into_response(self) -> axum::response::Response {
+        crate::interface_adapters::http::v1::presenters::common::error_presenter::ErrorPresenter::present(self).into_response()
+    }
+}
 
 pub trait MapToApplicationError<T> {
     fn map_app_err(self, message: &str) -> Result<T, ApplicationError>;

@@ -1,0 +1,222 @@
+    Updating crates.io index
+    Blocking waiting for file lock on package cache
+     Locking 8 packages to latest Rust 1.92.0 compatible versions
+      Adding aho-corasick v1.1.4
+      Adding async-stream v0.3.6
+      Adding async-stream-impl v0.3.6
+ Downgrading google-cloud-storage v1.7.0 -> v0.23.0 (available: v1.7.0)
+      Adding regex v1.12.2
+      Adding regex-automata v0.4.13
+      Adding regex-syntax v0.8.8
+      Adding reqwest-middleware v0.4.2
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Checking tokio v1.49.0
+   Compiling futures-macro v0.3.31
+   Compiling rustls-webpki v0.103.8
+    Checking aho-corasick v1.1.4
+    Checking regex-syntax v0.8.8
+    Checking jsonwebtoken v9.3.1
+   Compiling async-stream-impl v0.3.6
+    Checking axum-core v0.5.5
+    Checking async-stream v0.3.6
+    Checking rustls v0.23.35
+    Checking futures-util v0.3.31
+    Checking regex-automata v0.4.13
+    Checking regex v1.12.2
+    Checking hyper v1.8.1
+    Checking tokio-native-tls v0.3.1
+    Checking tokio-util v0.7.18
+    Checking tokio-stream v0.1.17
+    Checking tower v0.5.2
+    Checking multer v3.1.0
+   Compiling sqlx-core v0.8.6
+    Checking tower-http v0.6.8
+    Checking hyper-util v0.1.19
+    Checking hyper-tls v0.6.0
+    Checking axum v0.8.8
+    Checking reqwest v0.12.28
+    Checking sqlx-mysql v0.8.6
+    Checking google-cloud-metadata v0.5.1
+    Checking reqwest-middleware v0.4.2
+    Checking google-cloud-auth v0.17.2
+    Checking google-cloud-storage v0.23.0
+   Compiling sqlx-macros-core v0.8.6
+   Compiling sqlx-macros v0.8.6
+    Checking sqlx v0.8.6
+    Checking rust-backend v0.1.0 (C:\Users\prisa\Desktop\personalWebsite\rust-backend)
+warning: unused import: `google_cloud_storage::client::Client`
+ --> src\infrastructure\repository_impl\profile\image\repository.rs:9:5
+  |
+9 | use google_cloud_storage::client::Client;
+  |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+warning: unused import: `crate::interface_adapters::http::v1::controllers::auth::login_ctrl::login_ctrl`
+ --> src\delivery\http\routes\public\public.rs:9:5
+  |
+9 | use crate::interface_adapters::http::v1::controllers::auth::login_ctrl::login_ctrl;
+  |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+warning: unused import: `post`
+  --> src\delivery\http\routes\public\public.rs:10:26
+   |
+10 | use axum::routing::{get, post};
+   |                          ^^^^
+warning: unused import: `tracing::error`
+ --> src\shared\utils\markdown.rs:1:5
+  |
+1 | use tracing::error;
+  |     ^^^^^^^^^^^^^^
+warning: impl trait in impl method signature does not match trait method signature
+  --> src\application\services\profile\life_status\result.rs:14:31
+   |
+14 |     fn into_response(self) -> axum::response::Response {
+   |                               ^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+  ::: src\interface_adapters\http\v1\presenters\common\presenter_output.rs:4:31
+   |
+ 4 |     fn into_response(self) -> impl IntoResponse;
+   |                               ----------------- return type from trait method defined here
+   |
+   = note: add `#[allow(refining_impl_trait)]` if it is intended for this to be part of the public API of this crate
+   = note: we are soliciting feedback, see issue #121718 <https://github.com/rust-lang/rust/issues/121718> for more information
+   = note: `#[warn(refining_impl_trait_reachable)]` (part of `#[warn(refining_impl_trait)]`) on by default
+help: replace the return type so that it matches the trait
+   |
+14 -     fn into_response(self) -> axum::response::Response {
+14 +     fn into_response(self) -> impl IntoResponse {
+   |
+error[E0560]: struct `UploadObjectRequest` has no field named `name`
+   --> src\infrastructure\repository_impl\profile\image\repository.rs:195:13
+    |
+195 |             name: path,
+    |             ^^^^ `UploadObjectRequest` does not have this field
+    |
+    = note: available fields are: `generation`, `if_generation_match`, `if_generation_not_match`, `if_metageneration_match`, `if_metageneration_not_match` ... and 4 others
+error[E0560]: struct `UploadObjectRequest` has no field named `content_type`
+   --> src\infrastructure\repository_impl\profile\image\repository.rs:196:13
+    |
+196 |             content_type: Some(image.mime_type.clone()),
+    |             ^^^^^^^^^^^^ `UploadObjectRequest` does not have this field
+    |
+    = note: available fields are: `generation`, `if_generation_match`, `if_generation_not_match`, `if_metageneration_match`, `if_metageneration_not_match` ... and 4 others
+error[E0308]: mismatched types
+   --> src\infrastructure\repository_impl\profile\image\repository.rs:193:46
+    |
+193 |           let upload_type = UploadType::Simple(UploadObjectRequest {
+    |  ___________________________------------------_^
+    | |                           |
+    | |                           arguments to this enum variant are incorrect
+194 | |             bucket: self.gcs.bucket_name().to_string(),
+195 | |             name: path,
+196 | |             content_type: Some(image.mime_type.clone()),
+197 | |             ..Default::default()
+198 | |         });
+    | |_________^ expected `Media`, found `UploadObjectRequest`
+    |
+note: tuple variant defined here
+   --> C:\Users\prisa\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\google-cloud-storage-0.23.0\src\http\objects\upload.rs:30:5
+    |
+ 30 |     Simple(Media),
+    |     ^^^^^^
+error[E0599]: no function or associated item named `default` found for struct `Media` in the current scope
+   --> src\infrastructure\repository_impl\profile\image\repository.rs:200:75
+    |
+200 | ...dia::default())
+    |         ^^^^^^^ function or associated item not found in `Media`
+    |
+note: if you're trying to build a new `Media`, consider using `Media::new` which returns `Media`
+   --> C:\Users\prisa\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\google-cloud-storage-0.23.0\src\http\objects\upload.rs:19:5
+    |
+ 19 |     pub fn new(name: impl Into<Cow<'static, str>>) -> Self {
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+error[E0308]: mismatched types
+    --> src\infrastructure\repository_impl\profile\image\repository.rs:200:41
+     |
+ 200 | ...f.gcs.client().upload_object(&upload_type, image_data, &Media::def...
+     |                   ------------- ^^^^^^^^^^^^ expected `&UploadObjectRequest`, found `&UploadType`
+     |                   |
+     |                   arguments to this method are incorrect
+     |
+     = note: expected reference `&UploadObjectRequest`
+                found reference `&UploadType`
+note: method defined here
+    --> C:\Users\prisa\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\google-cloud-storage-0.23.0\src\http\storage_client.rs:1058:18
+     |
+1058 |     pub async fn upload_object<T: Into<Body>>(
+     |                  ^^^^^^^^^^^^^
+error[E0560]: struct `UploadObjectRequest` has no field named `name`
+  --> src\infrastructure\repository_impl\profile\performance_content\repository.rs:33:13
+   |
+33 |             name: path.clone(),
+   |             ^^^^ `UploadObjectRequest` does not have this field
+   |
+   = note: available fields are: `generation`, `if_generation_match`, `if_generation_not_match`, `if_metageneration_match`, `if_metageneration_not_match` ... and 4 others
+error[E0560]: struct `UploadObjectRequest` has no field named `content_type`
+  --> src\infrastructure\repository_impl\profile\performance_content\repository.rs:34:13
+   |
+34 |             content_type: Some("text/markdown".to_string()),
+   |             ^^^^^^^^^^^^ `UploadObjectRequest` does not have this field
+   |
+   = note: available fields are: `generation`, `if_generation_match`, `if_generation_not_match`, `if_metageneration_match`, `if_metageneration_not_match` ... and 4 others
+error[E0308]: mismatched types
+  --> src\infrastructure\repository_impl\profile\performance_content\repository.rs:31:46
+   |
+31 |           let upload_type = UploadType::Simple(UploadObjectRequest {
+   |  ___________________________------------------_^
+   | |                           |
+   | |                           arguments to this enum variant are incorrect
+32 | |             bucket: self.gcs.bucket_name().to_string(),
+33 | |             name: path.clone(),
+34 | |             content_type: Some("text/markdown".to_string()),
+35 | |             ..Default::default()
+36 | |         });
+   | |_________^ expected `Media`, found `UploadObjectRequest`
+   |
+note: tuple variant defined here
+  --> C:\Users\prisa\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\google-cloud-storage-0.23.0\src\http\objects\upload.rs:30:5
+   |
+30 |     Simple(Media),
+   |     ^^^^^^
+error[E0599]: no function or associated item named `default` found for struct `Media` in the current scope
+  --> src\infrastructure\repository_impl\profile\performance_content\repository.rs:38:92
+   |
+38 | ...edia::default())
+   |          ^^^^^^^ function or associated item not found in `Media`
+   |
+note: if you're trying to build a new `Media`, consider using `Media::new` which returns `Media`
+  --> C:\Users\prisa\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\google-cloud-storage-0.23.0\src\http\objects\upload.rs:19:5
+   |
+19 |     pub fn new(name: impl Into<Cow<'static, str>>) -> Self {
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+error[E0308]: mismatched types
+    --> src\infrastructure\repository_impl\profile\performance_content\repository.rs:38:41
+     |
+  38 | ...f.gcs.client().upload_object(&upload_type, content.as_bytes().to_v...
+     |                   ------------- ^^^^^^^^^^^^ expected `&UploadObjectRequest`, found `&UploadType`
+     |                   |
+     |                   arguments to this method are incorrect
+     |
+     = note: expected reference `&UploadObjectRequest`
+                found reference `&UploadType`
+note: method defined here
+    --> C:\Users\prisa\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\google-cloud-storage-0.23.0\src\http\storage_client.rs:1058:18
+     |
+1058 |     pub async fn upload_object<T: Into<Body>>(
+     |                  ^^^^^^^^^^^^^
+warning: unused variable: `profile_id`
+  --> src\infrastructure\repository_impl\profile\image\storage_repository.rs:33:9
+   |
+33 |         profile_id: &str,
+   |         ^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_profile_id`
+   |
+   = note: `#[warn(unused_variables)]` (part of `#[warn(unused)]`) on by default
+warning: unused variable: `filename`
+  --> src\infrastructure\repository_impl\profile\image\storage_repository.rs:34:9
+   |
+34 |         filename: &str,
+   |         ^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_filename`
+Some errors have detailed explanations: E0308, E0560, E0599.
+For more information about an error, try `rustc --explain E0308`.
+warning: `rust-backend` (lib) generated 7 warnings
+error: could not compile `rust-backend` (lib) due to 10 previous errors; 7 warnings emitted

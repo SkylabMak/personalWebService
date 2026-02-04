@@ -3,6 +3,9 @@
 Cargo.lock.bak
 **/*.rs.bk
 
+# Credentials
+/credentials
+
 # Environment variables
 .env
 .env.*

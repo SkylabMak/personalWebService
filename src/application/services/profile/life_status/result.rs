@@ -11,10 +11,17 @@ pub struct LifeStatusResult {
 }
 
 impl PresenterOutput for LifeStatusResult {
-    fn into_response(self) -> impl IntoResponse {
+    fn into_response(self) -> axum::response::Response {
         (
             axum::http::StatusCode::OK,
             axum::Json(ApiResponse::success(self)),
         )
+            .into_response()
+    }
+}
+
+impl IntoResponse for LifeStatusResult {
+    fn into_response(self) -> axum::response::Response {
+        PresenterOutput::into_response(self)
     }
 }
