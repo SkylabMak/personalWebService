@@ -86,7 +86,7 @@ where
             .ok_or_else(|| ApplicationError::NotFound { resource: "Performance", identifier: input.performance_id.clone() })?;
 
         let content_url = self.content_repository
-            .upload_content(&input.profile_id, &input.performance_id, &input.content_markdown)
+            .update_content(&input.profile_id, &input.performance_id, &input.content_markdown)
             .await
             .map_app_err("Failed to update performance content")?;
 

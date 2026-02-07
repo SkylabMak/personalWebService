@@ -12,18 +12,18 @@ use crate::infrastructure::repository_impl::profile::performance_content::reposi
 
 #[derive(Clone)]
 pub struct PerformanceUseCases {
-    pub create: Arc<CreatePerformanceService<PerformanceRepositoryImpl>>,
+    pub create: Arc<CreatePerformanceService<PerformanceRepositoryImpl, GcsPerformanceContentRepositoryImpl>>,
     pub update: Arc<UpdatePerformanceService<PerformanceRepositoryImpl>>,
-    pub delete: Arc<DeletePerformanceService<PerformanceRepositoryImpl>>,
+    pub delete: Arc<DeletePerformanceService<PerformanceRepositoryImpl, GcsPerformanceContentRepositoryImpl>>,
     pub get_content: Arc<GetPerformanceContentService<GcsPerformanceContentRepositoryImpl>>,
     pub update_content: Arc<UpdatePerformanceContentService<PerformanceRepositoryImpl, GcsPerformanceContentRepositoryImpl>>,
 }
 
 impl PerformanceUseCases {
     pub fn new(
-        create: CreatePerformanceService<PerformanceRepositoryImpl>,
+        create: CreatePerformanceService<PerformanceRepositoryImpl, GcsPerformanceContentRepositoryImpl>,
         update: UpdatePerformanceService<PerformanceRepositoryImpl>,
-        delete: DeletePerformanceService<PerformanceRepositoryImpl>,
+        delete: DeletePerformanceService<PerformanceRepositoryImpl, GcsPerformanceContentRepositoryImpl>,
         get_content: GetPerformanceContentService<GcsPerformanceContentRepositoryImpl>,
         update_content: UpdatePerformanceContentService<PerformanceRepositoryImpl, GcsPerformanceContentRepositoryImpl>,
     ) -> Self {

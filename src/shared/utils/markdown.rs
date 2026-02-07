@@ -1,5 +1,3 @@
-use tracing::error;
-
 /// Extracts image IDs from markdown content based on the GCS URL pattern.
 /// Pattern: ![alt](https://storage.googleapis.com/.../images/.../{uuid}.{ext})
 pub fn parse_image_ids(content: &str) -> Vec<String> {

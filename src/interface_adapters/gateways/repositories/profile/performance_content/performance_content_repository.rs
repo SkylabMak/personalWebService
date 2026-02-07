@@ -10,6 +10,13 @@ pub trait PerformanceContentRepository: Send + Sync {
         content: &str,
     ) -> Result<String, RepositoryError>;
 
+    async fn update_content(
+        &self,
+        profile_id: &str,
+        performance_id: &str,
+        content: &str,
+    ) -> Result<String, RepositoryError>;
+
     async fn get_content(
         &self,
         profile_id: &str,

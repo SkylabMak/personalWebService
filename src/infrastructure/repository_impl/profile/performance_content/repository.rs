@@ -41,6 +41,16 @@ impl PerformanceContentRepository for GcsPerformanceContentRepositoryImpl {
         Ok(format!("https://storage.googleapis.com/{}/{}", self.gcs.bucket_name(), path))
     }
 
+    async fn update_content(
+        &self,
+        profile_id: &str,
+        performance_id: &str,
+        content: &str,
+    ) -> Result<String, RepositoryError> {
+        // In GCS, simple upload overwrites the existing file if it exists at the same path
+        self.upload_content(profile_id, performance_id, content).await
+    }
+
     async fn get_content(
         &self,
         profile_id: &str,

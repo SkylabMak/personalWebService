@@ -6,8 +6,11 @@ use crate::interface_adapters::http::v1::controllers::profile::image::controller
     get_images_ctrl, get_image_ctrl, get_image_usage_ctrl, get_unused_images_ctrl
 };
 use crate::interface_adapters::http::v1::controllers::website::feature_status::controller::get_website_feature_status_ctrl;
-use crate::interface_adapters::http::v1::controllers::auth::login_ctrl::login_ctrl;
-use axum::routing::{get, post};
+//use crate::interface_adapters::http::v1::controllers::auth::login_ctrl::login_ctrl;
+use axum::routing::{
+    get, 
+    // post
+};
 
 pub fn public_v1_routes() -> Router<AppState> {
     Router::new()

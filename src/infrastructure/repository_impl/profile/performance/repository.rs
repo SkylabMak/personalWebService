@@ -203,4 +203,19 @@ impl PerformanceRepository for PerformanceRepositoryImpl {
 
         Ok(rows.into_iter().map(|r| r.image_id).collect())
     }
+
+    async fn delete_image_usage_by_performance_id(&self, performance_id: &str) -> Result<(), RepositoryError> {
+        sqlx::query!(
+            r#"
+            DELETE FROM image_usage
+            WHERE performance_id = ?
+            "#,
+            performance_id
+        )
+        .execute(self.mysql.pool())
+        .await
+        .map_err(|e| RepositoryError::DatabaseError(e.to_string()))?;
+
+        Ok(())
+    }
 }

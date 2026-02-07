@@ -5,29 +5,34 @@ use crate::application::use_cases::profile::performance::dto::input::{
     CreatePerformanceInput, UpdatePerformanceInput, DeletePerformanceInput
 };
 use crate::interface_adapters::gateways::repositories::profile::performance::performance_repository::PerformanceRepository;
+use crate::interface_adapters::gateways::repositories::profile::performance_content::performance_content_repository::PerformanceContentRepository;
 use super::result::{PerformanceResult, PerformanceUpdateResult, PerformanceDeleteResult};
 use crate::domain::entities::profile::performance::performance::Performance;
 
-pub struct CreatePerformanceService<R>
+pub struct CreatePerformanceService<R, C>
 where
     R: PerformanceRepository,
+    C: PerformanceContentRepository,
 {
     repository: R,
+    content_repository: C,
 }
 
-impl<R> CreatePerformanceService<R>
+impl<R, C> CreatePerformanceService<R, C>
 where
     R: PerformanceRepository,
+    C: PerformanceContentRepository,
 {
-    pub fn new(repository: R) -> Self {
-        Self { repository }
+    pub fn new(repository: R, content_repository: C) -> Self {
+        Self { repository, content_repository }
     }
 }
 
 #[async_trait]
-impl<R> UseCase for CreatePerformanceService<R>
+impl<R, C> UseCase for CreatePerformanceService<R, C>
 where
     R: PerformanceRepository + Send + Sync,
+    C: PerformanceContentRepository + Send + Sync,
 {
     type Input = CreatePerformanceInput;
     type Output = PerformanceResult;
@@ -39,6 +44,12 @@ where
         let id = uuid::Uuid::new_v4().to_string();
         let created_at = sqlx::types::chrono::Utc::now().to_rfc3339();
 
+        // Create empty markdown in GCS
+        let content_url = self.content_repository
+            .upload_content(&input.profile_id, &id, "")
+            .await
+            .map_app_err("Failed to create initial performance content")?;
+
         let perf = Performance {
             id: id.clone(),
             profile_id: input.profile_id,
@@ -46,9 +57,9 @@ where
             visibility_id: input.visibility_id,
             title: input.title.clone(),
             summary: input.summary,
-            content_url: None,
+            content_url: Some(content_url),
             content_type: "markdown".to_string(),
-            content_preview: None,
+            content_preview: Some("".to_string()),
             start_date: input.start_date,
             end_date: input.end_date,
             location: input.location,
@@ -141,26 +152,30 @@ where
     }
 }
 
-pub struct DeletePerformanceService<R>
+pub struct DeletePerformanceService<R, C>
 where
     R: PerformanceRepository,
+    C: PerformanceContentRepository,
 {
     repository: R,
+    content_repository: C,
 }
 
-impl<R> DeletePerformanceService<R>
+impl<R, C> DeletePerformanceService<R, C>
 where
     R: PerformanceRepository,
+    C: PerformanceContentRepository,
 {
-    pub fn new(repository: R) -> Self {
-        Self { repository }
+    pub fn new(repository: R, content_repository: C) -> Self {
+        Self { repository, content_repository }
     }
 }
 
 #[async_trait]
-impl<R> UseCase for DeletePerformanceService<R>
+impl<R, C> UseCase for DeletePerformanceService<R, C>
 where
     R: PerformanceRepository + Send + Sync,
+    C: PerformanceContentRepository + Send + Sync,
 {
     type Input = DeletePerformanceInput;
     type Output = PerformanceDeleteResult;
@@ -168,6 +183,18 @@ where
 
     async fn execute(&self, input: Self::Input) -> Result<Self::Output, Self::Error> {
         input.validate().map_err(|e| ApplicationError::ValidationError { message: e })?;
+
+        // Delete content in GCS
+        self.content_repository
+            .delete_content(&input.profile_id, &input.id)
+            .await
+            .map_app_err("Failed to delete performance content from storage")?;
+
+        // Delete image usage associations first
+        self.repository
+            .delete_image_usage_by_performance_id(&input.id)
+            .await
+            .map_app_err("Failed to delete performance image usage")?;
 
         self.repository
             .delete(&input.id)

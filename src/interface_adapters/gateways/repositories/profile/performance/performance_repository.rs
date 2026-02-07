@@ -21,4 +21,5 @@ pub trait PerformanceRepository: Send + Sync {
         performance_id: &str,
     ) -> Result<(), RepositoryError>;
     async fn get_tracked_images(&self, performance_id: &str) -> Result<Vec<String>, RepositoryError>;
+    async fn delete_image_usage_by_performance_id(&self, performance_id: &str) -> Result<(), RepositoryError>;
 }

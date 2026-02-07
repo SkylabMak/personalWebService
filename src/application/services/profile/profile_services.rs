@@ -33,9 +33,9 @@ pub struct ProfileServices {
     pub image_delete_unused: DeleteUnusedImagesService<ImageRepositoryImpl, GcsImageStorageRepositoryImpl>,
     pub image_track_usage: TrackImageUsageService<ImageRepositoryImpl>,
     pub image_untrack_usage: UntrackImageUsageService<ImageRepositoryImpl>,
-    pub performance_create: CreatePerformanceService<PerformanceRepositoryImpl>,
+    pub performance_create: CreatePerformanceService<PerformanceRepositoryImpl, GcsPerformanceContentRepositoryImpl>,
     pub performance_update: UpdatePerformanceService<PerformanceRepositoryImpl>,
-    pub performance_delete: DeletePerformanceService<PerformanceRepositoryImpl>,
+    pub performance_delete: DeletePerformanceService<PerformanceRepositoryImpl, GcsPerformanceContentRepositoryImpl>,
     pub performance_get_content: GetPerformanceContentService<GcsPerformanceContentRepositoryImpl>,
     pub performance_update_content: UpdatePerformanceContentService<PerformanceRepositoryImpl, GcsPerformanceContentRepositoryImpl>,
 }
@@ -56,9 +56,9 @@ impl ProfileServices {
             image_delete_unused: DeleteUnusedImagesService::new(repos.profile.image.clone(), repos.profile.image_storage.clone()),
             image_track_usage: TrackImageUsageService::new(repos.profile.image.clone()),
             image_untrack_usage: UntrackImageUsageService::new(repos.profile.image.clone()),
-            performance_create: CreatePerformanceService::new(repos.profile.performance.clone()),
+            performance_create: CreatePerformanceService::new(repos.profile.performance.clone(), repos.profile.performance_content.clone()),
             performance_update: UpdatePerformanceService::new(repos.profile.performance.clone()),
-            performance_delete: DeletePerformanceService::new(repos.profile.performance.clone()),
+            performance_delete: DeletePerformanceService::new(repos.profile.performance.clone(), repos.profile.performance_content.clone()),
             performance_get_content: GetPerformanceContentService::new((), repos.profile.performance_content.clone()),
             performance_update_content: UpdatePerformanceContentService::new(repos.profile.performance.clone(), repos.profile.performance_content.clone()),
         }
