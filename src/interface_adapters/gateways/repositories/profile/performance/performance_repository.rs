@@ -7,6 +7,11 @@ pub trait PerformanceRepository: Send + Sync {
     async fn create(&self, performance: Performance) -> Result<Performance, RepositoryError>;
     async fn update(&self, performance: Performance) -> Result<Performance, RepositoryError>;
     async fn find_by_id(&self, id: &str) -> Result<Option<Performance>, RepositoryError>;
+    async fn find_by_profile_id(
+        &self,
+        profile_id: &str,
+        visibility_id: Option<&str>,
+    ) -> Result<Vec<Performance>, RepositoryError>;
     async fn delete(&self, id: &str) -> Result<(), RepositoryError>;
     
     // Image usage tracking

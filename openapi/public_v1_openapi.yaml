@@ -1,0 +1,236 @@
+openapi: 3.0.1
+info:
+  title: Personal Website - Public API (v1)
+  version: 1.0.0
+  description: Public (unauthenticated) endpoints for profiles, announcements, features, and performances.
+servers:
+  - url: /
+components:
+  schemas:
+    ApiError:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+    ApiResponse_LifeStatusResult:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          $ref: '#/components/schemas/LifeStatusResult'
+        error:
+          $ref: '#/components/schemas/ApiError'
+    ApiResponse_AnnounceResult:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          $ref: '#/components/schemas/AnnounceResult'
+        error:
+          $ref: '#/components/schemas/ApiError'
+    ApiResponse_WebsiteFeatureStatusesResult:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          $ref: '#/components/schemas/WebsiteFeatureStatusesResult'
+        error:
+          $ref: '#/components/schemas/ApiError'
+    ApiResponse_PerformanceListResult:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          $ref: '#/components/schemas/PerformanceListResult'
+        error:
+          $ref: '#/components/schemas/ApiError'
+    LifeStatusResult:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+          nullable: true
+        color_token:
+          type: string
+    AnnounceResult:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Announce'
+    Announce:
+      type: object
+      properties:
+        id:
+          type: string
+        announce_type:
+          type: string
+        title:
+          type: string
+          nullable: true
+        message:
+          type: string
+          nullable: true
+        link_url:
+          type: string
+          nullable: true
+        link_text:
+          type: string
+          nullable: true
+        color_token:
+          type: string
+          nullable: true
+        starts_at:
+          type: string
+          nullable: true
+        ends_at:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+    FeatureStatusResult:
+      type: object
+      properties:
+        feature_code:
+          type: string
+        feature_name:
+          type: string
+        status_code:
+          type: string
+        status_name:
+          type: string
+        is_closed:
+          type: boolean
+        updated_at:
+          type: string
+        note:
+          type: string
+          nullable: true
+    WebsiteFeatureStatusesResult:
+      type: object
+      properties:
+        features:
+          type: array
+          items:
+            $ref: '#/components/schemas/FeatureStatusResult'
+    Performance:
+      type: object
+      properties:
+        id:
+          type: string
+        profile_id:
+          type: string
+        category_id:
+          type: string
+        visibility_id:
+          type: string
+        title:
+          type: string
+        summary:
+          type: string
+          nullable: true
+        content_url:
+          type: string
+          nullable: true
+        content_type:
+          type: string
+        content_preview:
+          type: string
+          nullable: true
+        start_date:
+          type: string
+          nullable: true
+        end_date:
+          type: string
+          nullable: true
+        location:
+          type: string
+          nullable: true
+        close:
+          type: boolean
+        created_at:
+          type: string
+        updated_at:
+          type: string
+          nullable: true
+    PerformanceListResult:
+      type: object
+      properties:
+        performances:
+          type: array
+          items:
+            $ref: '#/components/schemas/Performance'
+paths:
+  /profiles/{profile_id}/life-status/current:
+    get:
+      summary: Get current life status
+      parameters:
+        - name: profile_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Current life status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse_LifeStatusResult'
+  /profiles/{profile_id}/announces:
+    get:
+      summary: Get announcements list
+      parameters:
+        - name: profile_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Announcements
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse_AnnounceResult'
+  /features/{appID}/feature-status:
+    get:
+      summary: Get website feature status
+      parameters:
+        - name: appID
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Feature statuses
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse_WebsiteFeatureStatusesResult'
+  /profiles/{profile_id}/publicPerformances:
+    get:
+      summary: Get public performances
+      parameters:
+        - name: profile_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Public performances
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse_PerformanceListResult'

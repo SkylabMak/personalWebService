@@ -15,6 +15,7 @@ pub struct LoginResult {
     pub refresh_token: String,
     pub token_type: String,
     pub expires_in: u64,
+    pub refresh_token_expires_in: u64,
     pub user: AuthUserResponse,
 }
 

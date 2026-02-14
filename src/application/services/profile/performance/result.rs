@@ -88,3 +88,20 @@ impl IntoResponse for PerformanceContentUpdateResult {
             .into_response()
     }
 }
+
+use crate::domain::entities::profile::performance::performance::Performance;
+
+#[derive(Debug, Clone, Serialize)]
+pub struct PerformanceListResult {
+    pub performances: Vec<Performance>,
+}
+
+impl IntoResponse for PerformanceListResult {
+    fn into_response(self) -> axum::response::Response {
+        (
+            axum::http::StatusCode::OK,
+            axum::Json(ApiResponse::success(self)),
+        )
+            .into_response()
+    }
+}

@@ -4,6 +4,25 @@ use crate::interface_adapters::gateways::common::repository_error::RepositoryErr
 use crate::interface_adapters::gateways::repositories::profile::performance::performance_repository::PerformanceRepository;
 use async_trait::async_trait;
 
+#[derive(sqlx::FromRow)]
+struct PerformanceRecord {
+    id: String,
+    profile_id: String,
+    category_id: String,
+    visibility_id: String,
+    title: String,
+    summary: Option<String>,
+    content_url: Option<String>,
+    content_type: Option<String>,
+    content_preview: Option<String>,
+    start_date: Option<sqlx::types::chrono::NaiveDate>,
+    end_date: Option<sqlx::types::chrono::NaiveDate>,
+    location: Option<String>,
+    close: i8,
+    created_at: sqlx::types::chrono::NaiveDate,
+    updated_at: Option<sqlx::types::chrono::NaiveDate>,
+}
+
 #[derive(Clone)]
 pub struct PerformanceRepositoryImpl {
     mysql: MySqlRepository,
@@ -57,32 +76,20 @@ impl PerformanceRepository for PerformanceRepositoryImpl {
     }
 
     async fn find_by_id(&self, id: &str) -> Result<Option<Performance>, RepositoryError> {
-        let row = sqlx::query!(
+        let row = sqlx::query_as::<_, PerformanceRecord>(
             r#"
             SELECT 
-                id, 
-                profile_id, 
-                category_id, 
-                visibility_id, 
-                title, 
-                summary, 
-                content_url, 
-                content_type, 
-                content_preview, 
-                start_date, 
-                end_date, 
-                location, 
-                close, 
-                created_at, 
-                updated_at
+                id, profile_id, category_id, visibility_id, title, summary, 
+                content_url, content_type, content_preview, start_date, 
+                end_date, location, close, created_at, updated_at
             FROM performance
             WHERE id = ?
-            "#,
-            id
+            "#
         )
-            .fetch_optional(self.mysql.pool())
-            .await
-            .map_err(|e| RepositoryError::DatabaseError(e.to_string()))?;
+        .bind(id)
+        .fetch_optional(self.mysql.pool())
+        .await
+        .map_err(|e| RepositoryError::DatabaseError(e.to_string()))?;
 
         Ok(row.map(|r| Performance {
             id: r.id,
@@ -97,10 +104,69 @@ impl PerformanceRepository for PerformanceRepositoryImpl {
             start_date: r.start_date.map(|d| d.to_string()),
             end_date: r.end_date.map(|d| d.to_string()),
             location: r.location,
-            close: r.close.unwrap_or(0) != 0, // Convert TINYINT (i8) to bool
+            close: r.close != 0,
             created_at: r.created_at.to_string(),
             updated_at: r.updated_at.map(|d| d.to_string()),
         }))
+    }
+
+    async fn find_by_profile_id(
+        &self,
+        profile_id: &str,
+        visibility_id: Option<&str>,
+    ) -> Result<Vec<Performance>, RepositoryError> {
+        let query = if visibility_id.is_some() {
+            r#"
+            SELECT 
+                id, profile_id, category_id, visibility_id, title, summary, 
+                content_url, content_type, content_preview, start_date, 
+                end_date, location, close, created_at, updated_at
+            FROM performance
+            WHERE profile_id = ? AND visibility_id = ?
+            ORDER BY created_at DESC
+            "#
+        } else {
+            r#"
+            SELECT 
+                id, profile_id, category_id, visibility_id, title, summary, 
+                content_url, content_type, content_preview, start_date, 
+                end_date, location, close, created_at, updated_at
+            FROM performance
+            WHERE profile_id = ?
+            ORDER BY created_at DESC
+            "#
+        };
+
+        let mut q = sqlx::query_as::<_, PerformanceRecord>(query).bind(profile_id);
+        if let Some(vid) = visibility_id {
+            q = q.bind(vid);
+        }
+
+        let rows = q
+            .fetch_all(self.mysql.pool())
+            .await
+            .map_err(|e| RepositoryError::DatabaseError(e.to_string()))?;
+
+        Ok(rows
+            .into_iter()
+            .map(|r| Performance {
+                id: r.id,
+                profile_id: r.profile_id,
+                category_id: r.category_id,
+                visibility_id: r.visibility_id,
+                title: r.title,
+                summary: r.summary,
+                content_url: r.content_url,
+                content_type: r.content_type.unwrap_or_else(|| "markdown".to_string()),
+                content_preview: r.content_preview,
+                start_date: r.start_date.map(|d| d.to_string()),
+                end_date: r.end_date.map(|d| d.to_string()),
+                location: r.location,
+                close: r.close != 0,
+                created_at: r.created_at.to_string(),
+                updated_at: r.updated_at.map(|d| d.to_string()),
+            })
+            .collect())
     }
 
     async fn delete(&self, id: &str) -> Result<(), RepositoryError> {

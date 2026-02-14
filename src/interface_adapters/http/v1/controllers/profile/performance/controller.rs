@@ -6,7 +6,7 @@ use axum::{
 use serde::Deserialize;
 use crate::application::use_cases::profile::performance::dto::input::{
     CreatePerformanceInput, UpdatePerformanceInput, DeletePerformanceInput,
-    GetPerformanceContentInput, UpdatePerformanceContentInput
+    GetPerformanceContentInput, UpdatePerformanceContentInput, ListPerformancesInput
 };
 use crate::application::use_cases::use_case::UseCase;
 use crate::delivery::http::server::state::AppState;
@@ -115,4 +115,28 @@ pub async fn update_performance_content_ctrl(
     };
 
     state.profile.performance.update_content.execute(input).await.into_response()
+}
+
+pub async fn get_performances_ctrl(
+    State(state): State<AppState>,
+    Path(profile_id): Path<String>,
+) -> impl IntoResponse {
+    let input = ListPerformancesInput {
+        profile_id,
+        visibility_id: None,
+    };
+
+    state.profile.performance.list.execute(input).await.into_response()
+}
+
+pub async fn get_public_performances_ctrl(
+    State(state): State<AppState>,
+    Path(profile_id): Path<String>,
+) -> impl IntoResponse {
+    let input = ListPerformancesInput {
+        profile_id,
+        visibility_id: Some("visibility_public".to_string()),
+    };
+
+    state.profile.performance.list.execute(input).await.into_response()
 }

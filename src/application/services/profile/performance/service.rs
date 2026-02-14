@@ -2,11 +2,52 @@ use async_trait::async_trait;
 use crate::application::errors::{ApplicationError, MapToApplicationError};
 use crate::application::use_cases::use_case::UseCase;
 use crate::application::use_cases::profile::performance::dto::input::{
-    CreatePerformanceInput, UpdatePerformanceInput, DeletePerformanceInput
+    CreatePerformanceInput, UpdatePerformanceInput, DeletePerformanceInput,
+    ListPerformancesInput
 };
 use crate::interface_adapters::gateways::repositories::profile::performance::performance_repository::PerformanceRepository;
 use crate::interface_adapters::gateways::repositories::profile::performance_content::performance_content_repository::PerformanceContentRepository;
-use super::result::{PerformanceResult, PerformanceUpdateResult, PerformanceDeleteResult};
+use super::result::{
+    PerformanceResult, PerformanceUpdateResult, PerformanceDeleteResult,
+    PerformanceListResult
+};
+
+pub struct ListPerformancesService<R>
+where
+    R: PerformanceRepository,
+{
+    repository: R,
+}
+
+impl<R> ListPerformancesService<R>
+where
+    R: PerformanceRepository,
+{
+    pub fn new(repository: R) -> Self {
+        Self { repository }
+    }
+}
+
+#[async_trait]
+impl<R> UseCase for ListPerformancesService<R>
+where
+    R: PerformanceRepository + Send + Sync,
+{
+    type Input = ListPerformancesInput;
+    type Output = PerformanceListResult;
+    type Error = ApplicationError;
+
+    async fn execute(&self, input: Self::Input) -> Result<Self::Output, Self::Error> {
+        input.validate().map_err(|e| ApplicationError::ValidationError { message: e })?;
+
+        let performances = self.repository
+            .find_by_profile_id(&input.profile_id, input.visibility_id.as_deref())
+            .await
+            .map_app_err("Failed to fetch performances")?;
+
+        Ok(PerformanceListResult { performances })
+    }
+}
 use crate::domain::entities::profile::performance::performance::Performance;
 
 pub struct CreatePerformanceService<R, C>
@@ -42,7 +83,7 @@ where
         input.validate().map_err(|e| ApplicationError::ValidationError { message: e })?;
 
         let id = uuid::Uuid::new_v4().to_string();
-        let created_at = sqlx::types::chrono::Utc::now().to_rfc3339();
+        let created_at = sqlx::types::chrono::Utc::now().format("%Y-%m-%d").to_string();
 
         // Create empty markdown in GCS
         let content_url = self.content_repository
@@ -117,7 +158,7 @@ where
             .map_app_err("Failed to fetch existing performance")?
             .ok_or_else(|| ApplicationError::NotFound { resource: "Performance", identifier: input.id.clone() })?;
 
-        let updated_at = sqlx::types::chrono::Utc::now().to_rfc3339();
+        let updated_at = sqlx::types::chrono::Utc::now().format("%Y-%m-%d").to_string();
 
         let perf = Performance {
             id: input.id.clone(),

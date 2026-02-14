@@ -88,3 +88,17 @@ pub struct GetPerformanceContentInput {
     pub performance_id: String,
     pub profile_id: String,
 }
+
+pub struct ListPerformancesInput {
+    pub profile_id: String,
+    pub visibility_id: Option<String>,
+}
+
+impl ListPerformancesInput {
+    pub fn validate(&self) -> Result<(), String> {
+        if self.profile_id.trim().is_empty() {
+            return Err("profile_id cannot be empty".to_string());
+        }
+        Ok(())
+    }
+}

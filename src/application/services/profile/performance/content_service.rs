@@ -100,7 +100,7 @@ where
         let mut updated_perf = old_perf.clone();
         updated_perf.content_url = Some(content_url.clone());
         updated_perf.content_preview = content_preview;
-        updated_perf.updated_at = Some(sqlx::types::chrono::Utc::now().to_rfc3339());
+        updated_perf.updated_at = Some(sqlx::types::chrono::Utc::now().format("%Y-%m-%d").to_string());
 
         self.repository
             .update(updated_perf)

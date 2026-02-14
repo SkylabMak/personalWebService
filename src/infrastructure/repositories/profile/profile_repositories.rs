@@ -6,8 +6,10 @@ use crate::infrastructure::repository_impl::profile::image::repository::ImageRep
 use crate::infrastructure::repository_impl::profile::performance::repository::PerformanceRepositoryImpl;
 use crate::infrastructure::repository_impl::profile::performance_content::repository::GcsPerformanceContentRepositoryImpl;
 use crate::infrastructure::repository_impl::profile::image::storage_repository::GcsImageStorageRepositoryImpl;
+use crate::infrastructure::repository_impl::profile::repository::ProfileRepositoryImpl;
 
 pub struct ProfileRepositories {
+    pub profile: ProfileRepositoryImpl,
     pub life_status: LifeStatusRepositoryImpl,
     pub announce: AnnounceRepositoryImpl,
     pub image: ImageRepositoryImpl,
@@ -19,6 +21,7 @@ pub struct ProfileRepositories {
 impl ProfileRepositories {
     pub fn new(dbs: &Databases, cloud_storage: &CloudStorage) -> Self {
         Self {
+            profile: ProfileRepositoryImpl::new(dbs.mysql.clone()),
             life_status: LifeStatusRepositoryImpl::new(dbs.mysql.clone()),
             announce: AnnounceRepositoryImpl::new(dbs.mysql.clone()),
             image: ImageRepositoryImpl::new(dbs.mysql.clone()),

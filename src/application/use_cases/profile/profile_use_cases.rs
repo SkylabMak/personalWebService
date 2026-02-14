@@ -1,4 +1,5 @@
 use crate::application::services::profile::profile_services::ProfileServices;
+use crate::application::use_cases::profile::profile::ProfileBaseUseCases;
 use crate::application::use_cases::profile::life_status::LifeStatusUseCases;
 use crate::application::use_cases::profile::announce::AnnounceUseCases;
 use crate::application::use_cases::profile::image::ImageUseCases;
@@ -6,6 +7,7 @@ use crate::application::use_cases::profile::performance::PerformanceUseCases;
 
 #[derive(Clone)]
 pub struct ProfileUseCases {
+    pub profile: ProfileBaseUseCases,
     pub life_status: LifeStatusUseCases,
     pub announce: AnnounceUseCases,
     pub image: ImageUseCases,
@@ -14,6 +16,7 @@ pub struct ProfileUseCases {
 
 impl ProfileUseCases {
     pub fn new(services: ProfileServices) -> Self {
+        let profile = ProfileBaseUseCases::new(services.profile_get_one);
         let life_status = LifeStatusUseCases::new(services.life_status);
         let announce = AnnounceUseCases::new(services.announce);
         let image = ImageUseCases::new(
@@ -35,8 +38,10 @@ impl ProfileUseCases {
             services.performance_delete,
             services.performance_get_content,
             services.performance_update_content,
+            services.performance_get_all,
         );
         Self {
+            profile,
             life_status,
             announce,
             image,

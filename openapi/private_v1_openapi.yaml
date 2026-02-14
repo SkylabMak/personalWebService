@@ -1,0 +1,800 @@
+openapi: 3.0.1
+info:
+  title: Personal Website - Private API (v1)
+  version: 1.0.0
+  description: Private (authenticated) endpoints for profile images and performances.
+servers:
+  - url: /
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    ApiError:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+    ApiResponse_ImageResult:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          $ref: '#/components/schemas/ImageResult'
+        error:
+          $ref: '#/components/schemas/ApiError'
+    ApiResponse_ImageListResult:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          $ref: '#/components/schemas/ImageListResult'
+        error:
+          $ref: '#/components/schemas/ApiError'
+    ApiResponse_ImageUsageResult:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          $ref: '#/components/schemas/ImageUsageResult'
+        error:
+          $ref: '#/components/schemas/ApiError'
+    ApiResponse_UnusedImagesResult:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          $ref: '#/components/schemas/UnusedImagesResult'
+        error:
+          $ref: '#/components/schemas/ApiError'
+    ApiResponse_DeleteUnusedImagesResult:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          $ref: '#/components/schemas/DeleteUnusedImagesResult'
+        error:
+          $ref: '#/components/schemas/ApiError'
+    ApiResponse_MessageResult:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          $ref: '#/components/schemas/MessageResult'
+        error:
+          $ref: '#/components/schemas/ApiError'
+    ApiResponse_PerformanceResult:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          $ref: '#/components/schemas/PerformanceResult'
+        error:
+          $ref: '#/components/schemas/ApiError'
+    ApiResponse_PerformanceContentResult:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          $ref: '#/components/schemas/PerformanceContentResult'
+        error:
+          $ref: '#/components/schemas/ApiError'
+    ApiResponse_PerformanceListResult:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          $ref: '#/components/schemas/PerformanceListResult'
+        error:
+          $ref: '#/components/schemas/ApiError'
+    ApiResponse_ProfileResult:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          $ref: '#/components/schemas/ProfileResult'
+        error:
+          $ref: '#/components/schemas/ApiError'
+    ImageResult:
+      type: object
+      properties:
+        id:
+          type: string
+        storage_url:
+          type: string
+        filename:
+          type: string
+        original_filename:
+          type: string
+        width:
+          type: integer
+          nullable: true
+        height:
+          type: integer
+          nullable: true
+        file_size:
+          type: integer
+        mime_type:
+          type: string
+        alt_text:
+          type: string
+          nullable: true
+        caption:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+        usage_count:
+          type: integer
+          nullable: true
+    ProfileResult:
+      type: object
+      properties:
+        profile:
+          $ref: '#/components/schemas/Profile'
+    Profile:
+      type: object
+      properties:
+        id:
+          type: string
+        current_status_id:
+          type: string
+          nullable: true
+    ImageListResult:
+      type: object
+      properties:
+        images:
+          type: array
+          items:
+            $ref: '#/components/schemas/ImageResult'
+        total:
+          type: integer
+        limit:
+          type: integer
+        offset:
+          type: integer
+    ImageUsageResult:
+      type: object
+      properties:
+        image_id:
+          type: string
+        total_usage:
+          type: integer
+        performances:
+          type: array
+          items:
+            type: object
+            properties:
+              performance_id:
+                type: string
+              title:
+                type: string
+              usage_count:
+                type: integer
+              first_used_at:
+                type: string
+              last_used_at:
+                type: string
+    UnusedImagesResult:
+      type: object
+      properties:
+        unused_images:
+          type: array
+          items:
+            $ref: '#/components/schemas/ImageResult'
+        total_size_bytes:
+          type: integer
+        count:
+          type: integer
+    DeleteUnusedImagesResult:
+      type: object
+      properties:
+        deleted_count:
+          type: integer
+        freed_bytes:
+          type: integer
+    MessageResult:
+      type: object
+      properties:
+        message:
+          type: string
+        id:
+          type: string
+          nullable: true
+    PerformanceResult:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        content_url:
+          type: string
+          nullable: true
+        images_tracked:
+          type: integer
+        created_at:
+          type: string
+    PerformanceUpdateResult:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        images_added:
+          type: integer
+        images_removed:
+          type: integer
+        updated_at:
+          type: string
+    PerformanceDeleteResult:
+      type: object
+      properties:
+        message:
+          type: string
+        deleted_id:
+          type: string
+    PerformanceContentResult:
+      type: object
+      properties:
+        content_markdown:
+          type: string
+    PerformanceContentUpdateResult:
+      type: object
+      properties:
+        performance_id:
+          type: string
+        content_url:
+          type: string
+        images_added:
+          type: integer
+        images_removed:
+          type: integer
+    Performance:
+      type: object
+      properties:
+        id:
+          type: string
+        profile_id:
+          type: string
+        category_id:
+          type: string
+        visibility_id:
+          type: string
+        title:
+          type: string
+        summary:
+          type: string
+          nullable: true
+        content_url:
+          type: string
+          nullable: true
+        content_type:
+          type: string
+        content_preview:
+          type: string
+          nullable: true
+        start_date:
+          type: string
+          nullable: true
+        end_date:
+          type: string
+          nullable: true
+        location:
+          type: string
+          nullable: true
+        close:
+          type: boolean
+        created_at:
+          type: string
+        updated_at:
+          type: string
+          nullable: true
+    PerformanceListResult:
+      type: object
+      properties:
+        performances:
+          type: array
+          items:
+            $ref: '#/components/schemas/Performance'
+    CreatePerformanceRequest:
+      type: object
+      required: [category_id, visibility_id, title]
+      properties:
+        category_id:
+          type: string
+        visibility_id:
+          type: string
+        title:
+          type: string
+        summary:
+          type: string
+          nullable: true
+        start_date:
+          type: string
+          nullable: true
+        end_date:
+          type: string
+          nullable: true
+        location:
+          type: string
+          nullable: true
+    UpdatePerformanceRequest:
+      type: object
+      required: [category_id, visibility_id, title, close]
+      properties:
+        category_id:
+          type: string
+        visibility_id:
+          type: string
+        title:
+          type: string
+        summary:
+          type: string
+          nullable: true
+        start_date:
+          type: string
+          nullable: true
+        end_date:
+          type: string
+          nullable: true
+        location:
+          type: string
+          nullable: true
+        close:
+          type: boolean
+    UpdatePerformanceContentRequest:
+      type: object
+      required: [content_markdown]
+      properties:
+        content_markdown:
+          type: string
+    TrackImageUsageRequest:
+      type: object
+      required: [image_id, performance_id]
+      properties:
+        image_id:
+          type: string
+        performance_id:
+          type: string
+paths:
+  /profiles/{profile_id}:
+    get:
+      summary: Get profile
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: profile_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Profile
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse_ProfileResult'
+  /profiles/{profile_id}/images:
+    post:
+      summary: Upload image
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: profile_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+                alt_text:
+                  type: string
+                caption:
+                  type: string
+              required: [file]
+      responses:
+        '200':
+          description: Image uploaded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse_ImageResult'
+    get:
+      summary: List images
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: profile_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: search
+          in: query
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+        - name: offset
+          in: query
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Image list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse_ImageListResult'
+  /profiles/{profile_id}/images/unused:
+    delete:
+      summary: Delete unused images
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: profile_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: confirm
+          in: query
+          required: true
+          schema:
+            type: boolean
+        - name: days_old
+          in: query
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Unused images deleted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse_DeleteUnusedImagesResult'
+    get:
+      summary: Get unused images
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: profile_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: days_old
+          in: query
+          schema:
+            type: integer
+            default: 30
+      responses:
+        '200':
+          description: Unused images
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse_UnusedImagesResult'
+  /profiles/{profile_id}/images/usage:
+    post:
+      summary: Track image usage
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: profile_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TrackImageUsageRequest'
+      responses:
+        '200':
+          description: Usage tracked
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse_MessageResult'
+    delete:
+      summary: Untrack image usage
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: profile_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TrackImageUsageRequest'
+      responses:
+        '200':
+          description: Usage untracked
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse_MessageResult'
+    get:
+      summary: Get image usage
+      description: |
+        Note: implementation currently expects an `image_id` path parameter but the mounted route does not include it. The intended route is likely `/profiles/{profile_id}/images/{image_id}/usage`.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: profile_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: image_id
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Image usage
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse_ImageUsageResult'
+  /profiles/{profile_id}/images/{image_id}:
+    patch:
+      summary: Update image metadata
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: profile_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: image_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                alt_text:
+                  type: string
+                  nullable: true
+                caption:
+                  type: string
+                  nullable: true
+      responses:
+        '200':
+          description: Metadata updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse_MessageResult'
+    delete:
+      summary: Delete image
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: profile_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: image_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Image deleted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse_MessageResult'
+  /profiles/{profile_id}/images/{image_id}/force:
+    delete:
+      summary: Force delete image
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: profile_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: image_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Image force deleted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse_MessageResult'
+  /profiles/{profile_id}/performances:
+    get:
+      summary: Get performances list
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: profile_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Performances list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse_PerformanceListResult'
+    post:
+      summary: Create performance
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: profile_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreatePerformanceRequest'
+      responses:
+        '200':
+          description: Performance created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse_PerformanceResult'
+  /profiles/{profile_id}/performances/{performance_id}:
+    patch:
+      summary: Update performance
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: profile_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: performance_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdatePerformanceRequest'
+      responses:
+        '200':
+          description: Performance updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PerformanceUpdateResult'
+    delete:
+      summary: Delete performance
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: profile_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: performance_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Performance deleted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PerformanceDeleteResult'
+  /profiles/{profile_id}/performances/{performance_id}/content:
+    get:
+      summary: Get performance content
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: profile_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: performance_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Performance content
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse_PerformanceContentResult'
+    patch:
+      summary: Update performance content
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: profile_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: performance_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdatePerformanceContentRequest'
+      responses:
+        '200':
+          description: Performance content updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PerformanceContentUpdateResult'
+security:
+  - bearerAuth: []

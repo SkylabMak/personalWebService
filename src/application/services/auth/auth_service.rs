@@ -86,6 +86,7 @@ where
             refresh_token,
             token_type: "Bearer".to_string(),
             expires_in: self.access_expiry,
+            refresh_token_expires_in: self.refresh_expiry,
             user: AuthUserResponse {
                 id: user.id,
                 username: user.username,

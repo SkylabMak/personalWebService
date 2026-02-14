@@ -1,4 +1,5 @@
 use crate::application::services::profile::life_status::service::GetCurrentLifeStatusService;
+use crate::application::services::profile::service::GetProfileService;
 use crate::application::services::profile::announce::service::GetAnnounceListService;
 use crate::application::services::profile::image::service::{
     GetImagesService, GetImageService, GetImageUsageService,
@@ -6,7 +7,8 @@ use crate::application::services::profile::image::service::{
     GetUnusedImagesService, DeleteUnusedImagesService, TrackImageUsageService, UntrackImageUsageService
 };
 use crate::application::services::profile::performance::service::{
-    CreatePerformanceService, UpdatePerformanceService, DeletePerformanceService
+    CreatePerformanceService, UpdatePerformanceService, DeletePerformanceService,
+    ListPerformancesService
 };
 use crate::application::services::profile::performance::content_service::{
     GetPerformanceContentService, UpdatePerformanceContentService
@@ -18,8 +20,10 @@ use crate::infrastructure::repository_impl::profile::image::repository::ImageRep
 use crate::infrastructure::repository_impl::profile::image::storage_repository::GcsImageStorageRepositoryImpl;
 use crate::infrastructure::repository_impl::profile::performance::repository::PerformanceRepositoryImpl;
 use crate::infrastructure::repository_impl::profile::performance_content::repository::GcsPerformanceContentRepositoryImpl;
+use crate::infrastructure::repository_impl::profile::repository::ProfileRepositoryImpl;
 
 pub struct ProfileServices {
+    pub profile_get_one: GetProfileService<ProfileRepositoryImpl>,
     pub life_status: GetCurrentLifeStatusService<LifeStatusRepositoryImpl>,
     pub announce: GetAnnounceListService<AnnounceRepositoryImpl>,
     pub image_get_all: GetImagesService<ImageRepositoryImpl>,
@@ -38,11 +42,13 @@ pub struct ProfileServices {
     pub performance_delete: DeletePerformanceService<PerformanceRepositoryImpl, GcsPerformanceContentRepositoryImpl>,
     pub performance_get_content: GetPerformanceContentService<GcsPerformanceContentRepositoryImpl>,
     pub performance_update_content: UpdatePerformanceContentService<PerformanceRepositoryImpl, GcsPerformanceContentRepositoryImpl>,
+    pub performance_get_all: ListPerformancesService<PerformanceRepositoryImpl>,
 }
 
 impl ProfileServices {
     pub fn new(repos: &Repositories) -> Self {
         Self {
+            profile_get_one: GetProfileService::new(repos.profile.profile.clone()),
             life_status: GetCurrentLifeStatusService::new(repos.profile.life_status.clone()),
             announce: GetAnnounceListService::new(repos.profile.announce.clone()),
             image_get_all: GetImagesService::new(repos.profile.image.clone()),
@@ -61,6 +67,7 @@ impl ProfileServices {
             performance_delete: DeletePerformanceService::new(repos.profile.performance.clone(), repos.profile.performance_content.clone()),
             performance_get_content: GetPerformanceContentService::new((), repos.profile.performance_content.clone()),
             performance_update_content: UpdatePerformanceContentService::new(repos.profile.performance.clone(), repos.profile.performance_content.clone()),
+            performance_get_all: ListPerformancesService::new(repos.profile.performance.clone()),
         }
     }
 }
