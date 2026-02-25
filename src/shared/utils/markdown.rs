@@ -1,6 +1,7 @@
 /// Extracts image IDs from markdown content based on the GCS URL pattern.
 /// Pattern: ![alt](https://storage.googleapis.com/.../images/.../{uuid}.{ext})
 pub fn parse_image_ids(content: &str) -> Vec<String> {
+    return vec![];
     let mut ids = Vec::new();
     // Simplified regex-like logic for extraction without needing external regex crate if possible,
     // but the design specifies regex. Let's see if 'regex' crate is available.

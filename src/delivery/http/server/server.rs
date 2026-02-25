@@ -11,7 +11,7 @@ use crate::interface_adapters::http::v1::presenters::common::panic_handler::hand
 pub fn create_router(state: AppState) -> Router {
     let cors = CorsLayer::new()
         .allow_origin(Any)
-        .allow_methods([Method::GET, Method::POST, Method::PUT, Method::DELETE])
+        .allow_methods([Method::GET, Method::POST, Method::PUT, Method::DELETE, Method::PATCH])
         .allow_headers(Any);
 
     let public_routes = public_v1_routes();

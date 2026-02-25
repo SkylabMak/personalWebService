@@ -13,7 +13,7 @@ sqlx = { version = "0.8.6", features = ["mysql", "runtime-tokio-rustls", "chrono
 uuid = { version = "1.10.0", features = ["v4", "serde"] }
 async-trait = "0.1.89"
 anyhow = "1.0.100"
-google-cloud-storage = { version = "0.23.0" }
+google_cloud_storage = { version = "0.23.0", package = "google-cloud-storage" }
 google-cloud-auth = "0.17.0"
 image = "0.25.5"
 tower-http = { version = "0.6.8", features = ["catch-panic", "cors"] }
