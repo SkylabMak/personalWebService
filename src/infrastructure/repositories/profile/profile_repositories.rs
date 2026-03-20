@@ -7,9 +7,15 @@ use crate::infrastructure::repository_impl::profile::performance::repository::Pe
 use crate::infrastructure::repository_impl::profile::performance_content::repository::GcsPerformanceContentRepositoryImpl;
 use crate::infrastructure::repository_impl::profile::image::storage_repository::GcsImageStorageRepositoryImpl;
 use crate::infrastructure::repository_impl::profile::repository::ProfileRepositoryImpl;
+use crate::infrastructure::repository_impl::profile::data::repository::ProfileDataRepositoryImpl;
+use crate::infrastructure::repository_impl::profile::skill::repository::SkillRepositoryImpl;
+use crate::infrastructure::repository_impl::profile::social::repository::SocialRepositoryImpl;
 
 pub struct ProfileRepositories {
     pub profile: ProfileRepositoryImpl,
+    pub profile_data: ProfileDataRepositoryImpl,
+    pub skill: SkillRepositoryImpl,
+    pub social: SocialRepositoryImpl,
     pub life_status: LifeStatusRepositoryImpl,
     pub announce: AnnounceRepositoryImpl,
     pub image: ImageRepositoryImpl,
@@ -22,6 +28,9 @@ impl ProfileRepositories {
     pub fn new(dbs: &Databases, cloud_storage: &CloudStorage) -> Self {
         Self {
             profile: ProfileRepositoryImpl::new(dbs.mysql.clone()),
+            profile_data: ProfileDataRepositoryImpl::new(dbs.mysql.clone()),
+            skill: SkillRepositoryImpl::new(dbs.mysql.clone()),
+            social: SocialRepositoryImpl::new(dbs.mysql.clone()),
             life_status: LifeStatusRepositoryImpl::new(dbs.mysql.clone()),
             announce: AnnounceRepositoryImpl::new(dbs.mysql.clone()),
             image: ImageRepositoryImpl::new(dbs.mysql.clone()),

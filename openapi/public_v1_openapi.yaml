@@ -14,6 +14,15 @@ components:
           type: string
         message:
           type: string
+    ApiResponse_ProfileResult:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          $ref: '#/components/schemas/ProfileResult'
+        error:
+          $ref: '#/components/schemas/ApiError'
     ApiResponse_LifeStatusResult:
       type: object
       properties:
@@ -50,7 +59,90 @@ components:
           $ref: '#/components/schemas/PerformanceListResult'
         error:
           $ref: '#/components/schemas/ApiError'
+    ProfileResult:
+      type: object
+      properties:
+        profile:
+          $ref: '#/components/schemas/Profile'
+        announces:
+          type: array
+          items:
+            $ref: '#/components/schemas/Announce'
+        skills:
+          type: array
+          items:
+            $ref: '#/components/schemas/Skill'
+        socials:
+          type: array
+          items:
+            $ref: '#/components/schemas/Social'
+    Profile:
+      type: object
+      properties:
+        id:
+          type: string
+        user_id:
+          type: string
+        display_name:
+          type: string
+        headline:
+          type: string
+          nullable: true
+        bio:
+          type: string
+          nullable: true
+        avatar_url:
+          type: string
+          nullable: true
+        contact_email:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+        updated_at:
+          type: string
+          nullable: true
+        current_status_id:
+          type: string
+          nullable: true
+        current_status:
+          $ref: '#/components/schemas/LifeStatus'
+          nullable: true
+    Skill:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        skill_type:
+          type: string
+        scale_id:
+          type: string
+        scale_value:
+          type: number
+          format: double
+        logo_url:
+          type: string
+          nullable: true
+        description:
+          type: string
+          nullable: true
+    Social:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        link:
+          type: string
+        logo_url:
+          type: string
+          nullable: true
     LifeStatusResult:
+      $ref: '#/components/schemas/LifeStatus'
+    LifeStatus:
       type: object
       properties:
         name:
@@ -170,6 +262,22 @@ components:
           items:
             $ref: '#/components/schemas/Performance'
 paths:
+  /profiles/{profile_id}/public:
+    get:
+      summary: Get comprehensive public profile data
+      parameters:
+        - name: profile_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Comprehensive profile data including status, announces, skills and socials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse_ProfileResult'
   /profiles/{profile_id}/life-status/current:
     get:
       summary: Get current life status

@@ -3,4 +3,6 @@ pub mod announce;
 pub mod image;
 pub mod performance;
 pub mod performance_content;
+pub mod skill;
+pub mod social;
 pub mod profile_repository;

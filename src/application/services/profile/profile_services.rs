@@ -21,9 +21,17 @@ use crate::infrastructure::repository_impl::profile::image::storage_repository::
 use crate::infrastructure::repository_impl::profile::performance::repository::PerformanceRepositoryImpl;
 use crate::infrastructure::repository_impl::profile::performance_content::repository::GcsPerformanceContentRepositoryImpl;
 use crate::infrastructure::repository_impl::profile::repository::ProfileRepositoryImpl;
+use crate::infrastructure::repository_impl::profile::data::repository::ProfileDataRepositoryImpl;
+use crate::infrastructure::repository_impl::profile::skill::repository::SkillRepositoryImpl;
+use crate::infrastructure::repository_impl::profile::social::repository::SocialRepositoryImpl;
 
 pub struct ProfileServices {
-    pub profile_get_one: GetProfileService<ProfileRepositoryImpl>,
+    pub profile_get_one: GetProfileService<
+        ProfileDataRepositoryImpl, 
+        AnnounceRepositoryImpl,
+        SkillRepositoryImpl,
+        SocialRepositoryImpl
+    >,
     pub life_status: GetCurrentLifeStatusService<LifeStatusRepositoryImpl>,
     pub announce: GetAnnounceListService<AnnounceRepositoryImpl>,
     pub image_get_all: GetImagesService<ImageRepositoryImpl>,
@@ -48,7 +56,12 @@ pub struct ProfileServices {
 impl ProfileServices {
     pub fn new(repos: &Repositories) -> Self {
         Self {
-            profile_get_one: GetProfileService::new(repos.profile.profile.clone()),
+            profile_get_one: GetProfileService::new(
+                repos.profile.profile_data.clone(),
+                repos.profile.announce.clone(),
+                repos.profile.skill.clone(),
+                repos.profile.social.clone(),
+            ),
             life_status: GetCurrentLifeStatusService::new(repos.profile.life_status.clone()),
             announce: GetAnnounceListService::new(repos.profile.announce.clone()),
             image_get_all: GetImagesService::new(repos.profile.image.clone()),

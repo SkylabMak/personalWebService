@@ -1,0 +1,1 @@
+gcloud storage buckets update gs://personal-website_storage --cors-file=C:\Users\prisa\Desktop\personalWebsite\rust-backend\deployment\google\cors.json

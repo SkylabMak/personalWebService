@@ -3,7 +3,8 @@
     "origin": [
       "http://localhost:8080",
       "https://SkylabMek.net",
-      "http://SkylabMek.net"
+      "http://SkylabMek.net",
+      "https://www.skylabmek.net"
     ],
     "method": ["GET"],
     "responseHeader": ["*"],

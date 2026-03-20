@@ -1,3 +1,6 @@
+use serde::Serialize;
+
+#[derive(Debug, Clone, Serialize)]
 pub struct LifeStatus {
     pub name: String,
     pub description: Option<String>,
