@@ -42,6 +42,11 @@ sudo -u rustuser git pull origin main
 ```
 > Replace `main` with your branch if needed.
 
+#### Extra step: Fix ownership to your current user
+```bash
+sudo chown -R $USER:$USER /var/www/rust-backend
+```
+
 ### Step 3: Build release binary
 ```bash
 sudo -u rustuser cargo build --release
