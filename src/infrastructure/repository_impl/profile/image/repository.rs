@@ -25,7 +25,7 @@ impl ImageRepository for ImageRepositoryImpl {
         search: Option<String>,
         limit: i32,
         offset: i32,
-    ) -> Result<(Vec<(Image, i32)>, usize), RepositoryError> {
+    ) -> Result<(Vec<(Image, i32, Vec<ImageUsageInfo>)>, usize), RepositoryError> {
         let mut query_str = String::from(
             r#"
             SELECT 
@@ -60,9 +60,11 @@ impl ImageRepository for ImageRepositoryImpl {
             .await
             .map_err(|e| RepositoryError::DatabaseError(e.to_string()))?;
 
-        let images = rows.into_iter().map(|r| {
+        let mut images_with_usage = Vec::new();
+        for r in rows {
+            let image_id: String = r.get("id");
             let img = Image {
-                id: r.get("id"),
+                id: image_id.clone(),
                 profile_id: r.get("profile_id"),
                 filename: r.get("filename"),
                 original_filename: r.get("original_filename"),
@@ -76,8 +78,12 @@ impl ImageRepository for ImageRepositoryImpl {
                 created_at: format!("{:?}", r.get_unchecked::<sqlx::types::chrono::NaiveDateTime, _>("created_at")),
             };
             let usage: i64 = r.get("total_usage");
-            (img, usage as i32)
-        }).collect();
+            
+            // Fetch performance usage for each image
+            let performances = self.find_usage_by_image_id(&image_id, profile_id).await?;
+            
+            images_with_usage.push((img, usage as i32, performances));
+        }
 
         // Count total
         let mut count_query_str = String::from("SELECT COUNT(*) FROM image WHERE profile_id = ?");
@@ -99,14 +105,14 @@ impl ImageRepository for ImageRepositoryImpl {
             .await
             .map_err(|e| RepositoryError::DatabaseError(e.to_string()))?;
 
-        Ok((images, total as usize))
+        Ok((images_with_usage, total as usize))
     }
 
     async fn find_by_id_and_profile_id(
         &self,
         id: &str,
         profile_id: &str,
-    ) -> Result<Option<(Image, i32)>, RepositoryError> {
+    ) -> Result<Option<(Image, i32, Vec<ImageUsageInfo>)>, RepositoryError> {
         let row = sqlx::query(
             r#"
             SELECT 
@@ -125,7 +131,7 @@ impl ImageRepository for ImageRepositoryImpl {
         .await
         .map_err(|e| RepositoryError::DatabaseError(e.to_string()))?;
 
-        Ok(row.map(|r| {
+        if let Some(r) = row {
             let img = Image {
                 id: r.get("id"),
                 profile_id: r.get("profile_id"),
@@ -141,8 +147,11 @@ impl ImageRepository for ImageRepositoryImpl {
                 created_at: format!("{:?}", r.get_unchecked::<sqlx::types::chrono::NaiveDateTime, _>("created_at")),
             };
             let usage: i64 = r.get("total_usage");
-            (img, usage as i32)
-        }))
+            let performances = self.find_usage_by_image_id(id, profile_id).await?;
+            Ok(Some((img, usage as i32, performances)))
+        } else {
+            Ok(None)
+        }
     }
 
     async fn find_usage_by_image_id(
@@ -218,17 +227,17 @@ impl ImageRepository for ImageRepositoryImpl {
         image_id: &str,
         performance_id: &str,
     ) -> Result<(), RepositoryError> {
-        sqlx::query!(
+        sqlx::query(
             r#"
             INSERT INTO image_usage (id, image_id, performance_id, usage_count, first_used_at, last_used_at)
             VALUES (UUID(), ?, ?, 1, NOW(), NOW())
             ON DUPLICATE KEY UPDATE
                 usage_count = usage_count + 1,
                 last_used_at = NOW()
-            "#,
-            image_id,
-            performance_id
+            "#
         )
+        .bind(image_id)
+        .bind(performance_id)
         .execute(self.mysql.pool())
         .await
         .map_err(|e| RepositoryError::DatabaseError(e.to_string()))?;

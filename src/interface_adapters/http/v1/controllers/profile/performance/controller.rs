@@ -6,7 +6,8 @@ use axum::{
 use serde::Deserialize;
 use crate::application::use_cases::profile::performance::dto::input::{
     CreatePerformanceInput, UpdatePerformanceInput, DeletePerformanceInput,
-    GetPerformanceContentInput, UpdatePerformanceContentInput, ListPerformancesInput
+    GetPerformanceContentInput, UpdatePerformanceContentInput, ListPerformancesInput,
+    GetPerformanceImagesInput
 };
 use crate::application::use_cases::use_case::UseCase;
 use crate::delivery::http::server::state::AppState;
@@ -127,6 +128,18 @@ pub async fn get_performances_ctrl(
     };
 
     state.profile.performance.list.execute(input).await.into_response()
+}
+
+pub async fn get_performance_images_ctrl(
+    State(state): State<AppState>,
+    Path((profile_id, performance_id)): Path<(String, String)>,
+) -> impl IntoResponse {
+    let input = GetPerformanceImagesInput {
+        performance_id,
+        profile_id,
+    };
+
+    state.profile.performance.get_images.execute(input).await.into_response()
 }
 
 pub async fn get_public_performances_ctrl(

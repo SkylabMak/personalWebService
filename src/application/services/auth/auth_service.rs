@@ -46,17 +46,20 @@ where
     }
 
     pub async fn login(&self, username: &str, password: &str) -> Result<LoginResult, ApplicationError> {
+        println!("Login attempt for user: {}", username);
+        println!("Password: {}", password);
         let user = self.auth_repo
             .find_by_username(username)
             .await
             .map_app_err("Failed to fetch user")?
             .ok_or(ApplicationError::Unauthorized)?;
 
+        println!("User found: {:?}", user);
         // Simple check (in production use bcrypt or similar)
         if !self.password_service.verify_password(password, &user.password_hash)? {
              return Err(ApplicationError::Unauthorized);
         }
-
+        println!("Password verified");
         let access_token = self.jwt_service
             .generate_access_token(&user.id, &user.role_id)
             .map_err(|e| ApplicationError::Internal { message: e.to_string() })?;

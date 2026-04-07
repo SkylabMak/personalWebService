@@ -3,12 +3,13 @@ pub mod dto;
 use std::sync::Arc;
 use crate::application::services::profile::performance::service::{
     CreatePerformanceService, UpdatePerformanceService, DeletePerformanceService,
-    ListPerformancesService
+    ListPerformancesService, GetPerformanceImagesService
 };
 use crate::application::services::profile::performance::content_service::{
     GetPerformanceContentService, UpdatePerformanceContentService
 };
 use crate::infrastructure::repository_impl::profile::performance::repository::PerformanceRepositoryImpl;
+use crate::infrastructure::repository_impl::profile::image::repository::ImageRepositoryImpl;
 use crate::infrastructure::repository_impl::profile::performance_content::repository::GcsPerformanceContentRepositoryImpl;
 
 #[derive(Clone)]
@@ -19,6 +20,7 @@ pub struct PerformanceUseCases {
     pub get_content: Arc<GetPerformanceContentService<GcsPerformanceContentRepositoryImpl>>,
     pub update_content: Arc<UpdatePerformanceContentService<PerformanceRepositoryImpl, GcsPerformanceContentRepositoryImpl>>,
     pub list: Arc<ListPerformancesService<PerformanceRepositoryImpl>>,
+    pub get_images: Arc<GetPerformanceImagesService<PerformanceRepositoryImpl, ImageRepositoryImpl>>,
 }
 
 impl PerformanceUseCases {
@@ -29,6 +31,7 @@ impl PerformanceUseCases {
         get_content: GetPerformanceContentService<GcsPerformanceContentRepositoryImpl>,
         update_content: UpdatePerformanceContentService<PerformanceRepositoryImpl, GcsPerformanceContentRepositoryImpl>,
         list: ListPerformancesService<PerformanceRepositoryImpl>,
+        get_images: GetPerformanceImagesService<PerformanceRepositoryImpl, ImageRepositoryImpl>,
     ) -> Self {
         Self {
             create: Arc::new(create),
@@ -37,6 +40,7 @@ impl PerformanceUseCases {
             get_content: Arc::new(get_content),
             update_content: Arc::new(update_content),
             list: Arc::new(list),
+            get_images: Arc::new(get_images),
         }
     }
 }

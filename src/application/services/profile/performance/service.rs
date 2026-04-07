@@ -3,13 +3,15 @@ use crate::application::errors::{ApplicationError, MapToApplicationError};
 use crate::application::use_cases::use_case::UseCase;
 use crate::application::use_cases::profile::performance::dto::input::{
     CreatePerformanceInput, UpdatePerformanceInput, DeletePerformanceInput,
-    ListPerformancesInput
+    ListPerformancesInput, GetPerformanceImagesInput
 };
+use crate::application::services::profile::image::result::{ImageResult, PerformanceUsageInfo};
+use crate::interface_adapters::gateways::repositories::profile::image::image_repository::ImageRepository;
 use crate::interface_adapters::gateways::repositories::profile::performance::performance_repository::PerformanceRepository;
 use crate::interface_adapters::gateways::repositories::profile::performance_content::performance_content_repository::PerformanceContentRepository;
 use super::result::{
     PerformanceResult, PerformanceUpdateResult, PerformanceDeleteResult,
-    PerformanceListResult
+    PerformanceListResult, PerformanceImagesResult
 };
 
 pub struct ListPerformancesService<R>
@@ -186,8 +188,7 @@ where
         Ok(PerformanceUpdateResult {
             id: input.id,
             title: input.title,
-            images_added: 0,
-            images_removed: 0,
+            images_synced: 0,
             updated_at,
         })
     }
@@ -245,6 +246,88 @@ where
         Ok(PerformanceDeleteResult {
             message: "Performance deleted".to_string(),
             deleted_id: input.id,
+        })
+    }
+}
+
+pub struct GetPerformanceImagesService<R, I>
+where
+    R: PerformanceRepository,
+    I: ImageRepository,
+{
+    repository: R,
+    image_repository: I,
+}
+
+impl<R, I> GetPerformanceImagesService<R, I>
+where
+    R: PerformanceRepository,
+    I: ImageRepository,
+{
+    pub fn new(repository: R, image_repository: I) -> Self {
+        Self { repository, image_repository }
+    }
+}
+
+#[async_trait]
+impl<R, I> UseCase for GetPerformanceImagesService<R, I>
+where
+    R: PerformanceRepository + Send + Sync,
+    I: ImageRepository + Send + Sync,
+{
+    type Input = GetPerformanceImagesInput;
+    type Output = PerformanceImagesResult;
+    type Error = ApplicationError;
+
+    async fn execute(&self, input: Self::Input) -> Result<Self::Output, Self::Error> {
+        // Verify performance exists
+        let _perf = self.repository
+            .find_by_id(&input.performance_id)
+            .await
+            .map_app_err("Failed to fetch performance")?
+            .ok_or_else(|| ApplicationError::NotFound {
+                resource: "Performance",
+                identifier: input.performance_id.clone(),
+            })?;
+
+        let images_data = self.repository
+            .find_images_by_performance_id(&input.performance_id)
+            .await
+            .map_app_err("Failed to fetch performance images")?;
+
+        let mut images = Vec::new();
+        for img in images_data {
+            // Fetch usage and performances for each image to be consistent with ImageResult
+            // However, maybe it's better to just get what we need. 
+            // find_by_id_and_profile_id returns (Image, total_usage, Vec<ImageUsageInfo>)
+            if let Ok(Some((img, usage, perfs))) = self.image_repository.find_by_id_and_profile_id(&img.id, &input.profile_id).await {
+                 images.push(ImageResult {
+                    id: img.id,
+                    storage_url: img.storage_url,
+                    filename: img.filename,
+                    original_filename: img.original_filename,
+                    width: img.width,
+                    height: img.height,
+                    file_size: img.file_size,
+                    mime_type: img.mime_type,
+                    alt_text: img.alt_text,
+                    caption: img.caption,
+                    created_at: img.created_at,
+                    usage_count: Some(usage),
+                    performances: perfs.into_iter().map(|p| PerformanceUsageInfo {
+                        performance_id: p.performance_id,
+                        title: p.title,
+                        usage_count: p.usage_count,
+                        first_used_at: p.first_used_at,
+                        last_used_at: p.last_used_at,
+                    }).collect(),
+                });
+            }
+        }
+
+        Ok(PerformanceImagesResult {
+            performance_id: input.performance_id,
+            images,
         })
     }
 }

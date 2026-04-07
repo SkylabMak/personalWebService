@@ -1,3 +1,2 @@
-pub mod private;
-pub mod public;
 pub mod auth;
+pub mod v1;

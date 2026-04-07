@@ -11,13 +11,13 @@ pub trait ImageRepository: Send + Sync {
         search: Option<String>,
         limit: i32,
         offset: i32,
-    ) -> Result<(Vec<(Image, i32)>, usize), RepositoryError>;
+    ) -> Result<(Vec<(Image, i32, Vec<ImageUsageInfo>)>, usize), RepositoryError>;
 
     async fn find_by_id_and_profile_id(
         &self,
         id: &str,
         profile_id: &str,
-    ) -> Result<Option<(Image, i32)>, RepositoryError>;
+    ) -> Result<Option<(Image, i32, Vec<ImageUsageInfo>)>, RepositoryError>;
 
     async fn find_usage_by_image_id(
         &self,

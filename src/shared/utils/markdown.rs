@@ -1,27 +1,17 @@
 /// Extracts image IDs from markdown content based on the GCS URL pattern.
 /// Pattern: ![alt](https://storage.googleapis.com/.../images/.../{uuid}.{ext})
 pub fn parse_image_ids(content: &str) -> Vec<String> {
-    return vec![];
     let mut ids = Vec::new();
-    // Simplified regex-like logic for extraction without needing external regex crate if possible,
-    // but the design specifies regex. Let's see if 'regex' crate is available.
-    // It's not in Cargo.toml. I should add it or use a simple parser.
-    // Since I cannot easily add dependencies, I'll use a basic string search for now
-    // or suggest adding the dependency.
-    
-    // Actually, I can use a simple manual parser for the specific GCS pattern
-    // !\[.*?\]\(https://storage\.googleapis\.com/.+?/([a-f0-9-]+)\.\w+\)
-    
-    let mut cursor = 0;
-    while let Some(start_idx) = content[cursor..].find("![") {
-        let abs_start = cursor + start_idx;
-        if let Some(link_start) = content[abs_start..].find("](https://storage.googleapis.com/") {
-            let abs_link_start = abs_start + link_start + 2; // skip "]("
-            if let Some(link_end) = content[abs_link_start..].find(")") {
-                let abs_link_end = abs_link_start + link_end;
-                let url = &content[abs_link_start..abs_link_end];
+    let mut remaining = content;
+
+    while let Some(start_idx) = remaining.find("![") {
+        remaining = &remaining[start_idx + 2..];
+        if let Some(link_start_rel) = remaining.find("](") {
+            let url_start = link_start_rel + 2;
+            let after_bracket = &remaining[url_start..];
+            if let Some(link_end_rel) = after_bracket.find(')') {
+                let url = &after_bracket[..link_end_rel];
                 
-                // Extract filename from URL
                 if let Some(last_slash) = url.rfind('/') {
                     let filename_with_ext = &url[last_slash + 1..];
                     if let Some(dot_idx) = filename_with_ext.rfind('.') {
@@ -31,12 +21,8 @@ pub fn parse_image_ids(content: &str) -> Vec<String> {
                         }
                     }
                 }
-                cursor = abs_link_end + 1;
-            } else {
-                cursor = abs_link_start;
+                remaining = &after_bracket[link_end_rel + 1..];
             }
-        } else {
-            cursor = abs_start + 2;
         }
     }
     
@@ -95,4 +81,16 @@ pub fn strip_markdown(content: &str) -> String {
     }
     
     result.trim().to_string()
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_parse_image_ids() {
+        let content = "![image](https://storage.googleapis.com/personal-website_storage/performance_image/profile_001/4c8e1e80-5970-475a-b170-6fabffaa4a4c.jpg) some text ![another](https://example.com/images/img2.png)";
+        let ids = parse_image_ids(content);
+        assert_eq!(ids, vec!["4c8e1e80-5970-475a-b170-6fabffaa4a4c", "img2"]);
+    }
 }

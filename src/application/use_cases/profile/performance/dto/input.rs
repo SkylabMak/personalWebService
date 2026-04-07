@@ -89,6 +89,11 @@ pub struct GetPerformanceContentInput {
     pub profile_id: String,
 }
 
+pub struct GetPerformanceImagesInput {
+    pub performance_id: String,
+    pub profile_id: String,
+}
+
 pub struct ListPerformancesInput {
     pub profile_id: String,
     pub visibility_id: Option<String>,

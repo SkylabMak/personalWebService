@@ -1,8 +1,10 @@
 use crate::domain::entities::profile::performance::performance::Performance;
+use crate::domain::entities::profile::image::image::Image;
 use crate::infrastructure::db::mysql::common::mysql_repository::MySqlRepository;
 use crate::interface_adapters::gateways::common::repository_error::RepositoryError;
 use crate::interface_adapters::gateways::repositories::profile::performance::performance_repository::PerformanceRepository;
 use async_trait::async_trait;
+use sqlx::Row;
 
 #[derive(sqlx::FromRow)]
 struct PerformanceRecord {
@@ -91,23 +93,7 @@ impl PerformanceRepository for PerformanceRepositoryImpl {
         .await
         .map_err(|e| RepositoryError::DatabaseError(e.to_string()))?;
 
-        Ok(row.map(|r| Performance {
-            id: r.id,
-            profile_id: r.profile_id,
-            category_id: r.category_id,
-            visibility_id: r.visibility_id,
-            title: r.title,
-            summary: r.summary,
-            content_url: r.content_url,
-            content_type: r.content_type.unwrap_or_else(|| "markdown".to_string()),
-            content_preview: r.content_preview,
-            start_date: r.start_date.map(|d| d.to_string()),
-            end_date: r.end_date.map(|d| d.to_string()),
-            location: r.location,
-            close: r.close != 0,
-            created_at: r.created_at.to_string(),
-            updated_at: r.updated_at.map(|d| d.to_string()),
-        }))
+        Ok(row.map(record_to_performance))
     }
 
     async fn find_by_profile_id(
@@ -149,23 +135,7 @@ impl PerformanceRepository for PerformanceRepositoryImpl {
 
         Ok(rows
             .into_iter()
-            .map(|r| Performance {
-                id: r.id,
-                profile_id: r.profile_id,
-                category_id: r.category_id,
-                visibility_id: r.visibility_id,
-                title: r.title,
-                summary: r.summary,
-                content_url: r.content_url,
-                content_type: r.content_type.unwrap_or_else(|| "markdown".to_string()),
-                content_preview: r.content_preview,
-                start_date: r.start_date.map(|d| d.to_string()),
-                end_date: r.end_date.map(|d| d.to_string()),
-                location: r.location,
-                close: r.close != 0,
-                created_at: r.created_at.to_string(),
-                updated_at: r.updated_at.map(|d| d.to_string()),
-            })
+            .map(record_to_performance)
             .collect())
     }
 
@@ -184,90 +154,66 @@ impl PerformanceRepository for PerformanceRepositoryImpl {
         Ok(())
     }
 
-    async fn track_image_usage(
+    async fn sync_image_usage(
         &self,
-        image_id: &str,
         performance_id: &str,
+        current_image_ids: &[String],
     ) -> Result<(), RepositoryError> {
-        // Using MySQL's ON DUPLICATE KEY UPDATE as specified in the design
-        sqlx::query!(
-            r#"
-            INSERT INTO image_usage (id, image_id, performance_id, usage_count, first_used_at, last_used_at)
-            VALUES (UUID(), ?, ?, 1, NOW(), NOW())
-            ON DUPLICATE KEY UPDATE
-                usage_count = usage_count + 1,
-                last_used_at = NOW()
-            "#,
-            image_id,
-            performance_id
-        )
-        .execute(self.mysql.pool())
-        .await
-        .map_err(|e| RepositoryError::DatabaseError(e.to_string()))?;
+        let pool = self.mysql.pool();
 
-        Ok(())
-    }
-
-    async fn untrack_image_usage(
-        &self,
-        image_id: &str,
-        performance_id: &str,
-    ) -> Result<(), RepositoryError> {
-        // Decrement usage or remove if it was the last one
-        // First check current usage
-        let row = sqlx::query!(
-            r#"
-            SELECT id, usage_count FROM image_usage
-            WHERE image_id = ? AND performance_id = ?
-            "#,
-            image_id,
-            performance_id
-        )
-        .fetch_optional(self.mysql.pool())
-        .await
-        .map_err(|e| RepositoryError::DatabaseError(e.to_string()))?;
-
-        if let Some(r) = row {
-            let current_count = r.usage_count.unwrap_or(0);
-            if current_count <= 1 {
-                sqlx::query!(
-                    r#"
-                    DELETE FROM image_usage WHERE id = ?
-                    "#,
-                    r.id
-                )
-                .execute(self.mysql.pool())
-                .await
-                .map_err(|e| RepositoryError::DatabaseError(e.to_string()))?;
-            } else {
-                sqlx::query!(
-                    r#"
-                    UPDATE image_usage SET usage_count = usage_count - 1 WHERE id = ?
-                    "#,
-                    r.id
-                )
-                .execute(self.mysql.pool())
-                .await
-                .map_err(|e| RepositoryError::DatabaseError(e.to_string()))?;
-            }
+        if current_image_ids.is_empty() {
+            sqlx::query!(
+                "DELETE FROM image_usage WHERE performance_id = ?",
+                performance_id
+            )
+            .execute(pool)
+            .await
+            .map_err(|e| RepositoryError::DatabaseError(e.to_string()))?;
+            return Ok(());
         }
 
+        // Bulk UPSERT
+        // Group by image_id to get correct counts for each performance
+        use std::collections::HashMap;
+        let mut image_counts = HashMap::new();
+        for image_id in current_image_ids {
+            *image_counts.entry(image_id).or_insert(0) += 1;
+        }
+
+        for (image_id, count) in image_counts {
+            sqlx::query!(
+                r#"
+                INSERT INTO image_usage (id, image_id, performance_id, usage_count, first_used_at, last_used_at)
+                VALUES (UUID(), ?, ?, ?, NOW(), NOW())
+                ON DUPLICATE KEY UPDATE
+                    usage_count = VALUES(usage_count),
+                    last_used_at = NOW()
+                "#,
+                image_id,
+                performance_id,
+                count
+            )
+            .execute(pool)
+            .await
+            .map_err(|e| RepositoryError::DatabaseError(e.to_string()))?;
+        }
+
+        // Delete Orphans
+        let mut query_builder = sqlx::QueryBuilder::new("DELETE FROM image_usage WHERE performance_id = ");
+        query_builder.push_bind(performance_id);
+        query_builder.push(" AND image_id NOT IN (");
+        let mut separated = query_builder.separated(", ");
+        for id in current_image_ids {
+            separated.push_bind(id);
+        }
+        separated.push_unseparated(")");
+
+        query_builder.build()
+            .execute(pool)
+            .await
+            .map_err(|e| RepositoryError::DatabaseError(e.to_string()))?;
+
         Ok(())
-    }
-
-    async fn get_tracked_images(&self, performance_id: &str) -> Result<Vec<String>, RepositoryError> {
-        let rows = sqlx::query!(
-            r#"
-            SELECT image_id FROM image_usage
-            WHERE performance_id = ?
-            "#,
-            performance_id
-        )
-        .fetch_all(self.mysql.pool())
-        .await
-        .map_err(|e| RepositoryError::DatabaseError(e.to_string()))?;
-
-        Ok(rows.into_iter().map(|r| r.image_id).collect())
     }
 
     async fn delete_image_usage_by_performance_id(&self, performance_id: &str) -> Result<(), RepositoryError> {
@@ -283,5 +229,65 @@ impl PerformanceRepository for PerformanceRepositoryImpl {
         .map_err(|e| RepositoryError::DatabaseError(e.to_string()))?;
 
         Ok(())
+    }
+
+    async fn find_images_by_performance_id(
+        &self,
+        performance_id: &str,
+    ) -> Result<Vec<Image>, RepositoryError> {
+        let rows = sqlx::query(
+            r#"
+            SELECT 
+                i.id, i.profile_id, i.filename, i.original_filename, i.storage_url,
+                i.file_size, i.width, i.height, i.mime_type, i.alt_text, i.caption, i.created_at
+            FROM image i
+            INNER JOIN image_usage iu ON i.id = iu.image_id
+            WHERE iu.performance_id = ?
+            "#
+        )
+        .bind(performance_id)
+        .fetch_all(self.mysql.pool())
+        .await
+        .map_err(|e| RepositoryError::DatabaseError(e.to_string()))?;
+
+        let mut images = Vec::new();
+        for r in rows {
+            images.push(Image {
+                id: r.get("id"),
+                profile_id: r.get("profile_id"),
+                filename: r.get("filename"),
+                original_filename: r.get("original_filename"),
+                storage_url: r.get("storage_url"),
+                file_size: r.get("file_size"),
+                width: r.get("width"),
+                height: r.get("height"),
+                mime_type: r.get("mime_type"),
+                alt_text: r.get("alt_text"),
+                caption: r.get("caption"),
+                created_at: format!("{:?}", r.get_unchecked::<sqlx::types::chrono::NaiveDateTime, _>("created_at")),
+            });
+        }
+
+        Ok(images)
+    }
+}
+
+fn record_to_performance(r: PerformanceRecord) -> Performance {
+    Performance {
+        id: r.id,
+        profile_id: r.profile_id,
+        category_id: r.category_id,
+        visibility_id: r.visibility_id,
+        title: r.title,
+        summary: r.summary,
+        content_url: r.content_url,
+        content_type: r.content_type.unwrap_or_else(|| "markdown".to_string()),
+        content_preview: r.content_preview,
+        start_date: r.start_date.map(|d| d.to_string()),
+        end_date: r.end_date.map(|d| d.to_string()),
+        location: r.location,
+        close: r.close != 0,
+        created_at: r.created_at.to_string(),
+        updated_at: r.updated_at.map(|d| d.to_string()),
     }
 }

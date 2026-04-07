@@ -39,6 +39,7 @@ impl ProfileUseCases {
             services.performance_get_content,
             services.performance_update_content,
             services.performance_get_all,
+            services.performance_get_images,
         );
         Self {
             profile,

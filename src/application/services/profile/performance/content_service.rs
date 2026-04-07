@@ -7,8 +7,7 @@ use crate::application::use_cases::profile::performance::dto::input::{
 use crate::interface_adapters::gateways::repositories::profile::performance::performance_repository::PerformanceRepository;
 use crate::interface_adapters::gateways::repositories::profile::performance_content::performance_content_repository::PerformanceContentRepository;
 use super::result::{PerformanceContentResult, PerformanceContentUpdateResult};
-use crate::shared::utils::markdown::parse_image_ids;
-use std::collections::HashSet;
+use crate::shared::utils::markdown::{parse_image_ids, strip_markdown};
 
 pub struct GetPerformanceContentService<C>
 where
@@ -90,10 +89,11 @@ where
             .await
             .map_app_err("Failed to update performance content")?;
 
-        let content_preview = if input.content_markdown.len() > 500 {
-            Some(input.content_markdown[..500].to_string())
+        let stripped_content = strip_markdown(&input.content_markdown);
+        let content_preview = if stripped_content.len() > 500 {
+            Some(stripped_content[..500].to_string())
         } else {
-            Some(input.content_markdown.clone())
+            Some(stripped_content)
         };
 
         // Update performance with new preview and content_url
@@ -108,33 +108,16 @@ where
             .map_app_err("Failed to update performance metadata")?;
 
         // Image tracking
-        let old_image_ids: HashSet<String> = parse_image_ids(old_perf.content_preview.as_deref().unwrap_or("")).into_iter().collect();
-        let new_image_ids: HashSet<String> = parse_image_ids(&input.content_markdown).into_iter().collect();
-
-        let mut images_added = 0;
-        let mut images_removed = 0;
-
-        for img_id in new_image_ids.difference(&old_image_ids) {
-            self.repository
-                .track_image_usage(img_id, &input.performance_id)
-                .await
-                .map_app_err("Failed to track new image usage")?;
-            images_added += 1;
-        }
-
-        for img_id in old_image_ids.difference(&new_image_ids) {
-            self.repository
-                .untrack_image_usage(img_id, &input.performance_id)
-                .await
-                .map_app_err("Failed to untrack removed image usage")?;
-            images_removed += 1;
-        }
+        let image_ids = parse_image_ids(&input.content_markdown);
+        self.repository
+            .sync_image_usage(&input.performance_id, &image_ids)
+            .await
+            .map_app_err("Failed to sync image usage")?;
 
         Ok(PerformanceContentUpdateResult {
             performance_id: input.performance_id,
             content_url,
-            images_added,
-            images_removed,
+            images_synced: image_ids.len(),
         })
     }
 }

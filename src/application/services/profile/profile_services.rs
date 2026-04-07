@@ -8,7 +8,7 @@ use crate::application::services::profile::image::service::{
 };
 use crate::application::services::profile::performance::service::{
     CreatePerformanceService, UpdatePerformanceService, DeletePerformanceService,
-    ListPerformancesService
+    ListPerformancesService, GetPerformanceImagesService
 };
 use crate::application::services::profile::performance::content_service::{
     GetPerformanceContentService, UpdatePerformanceContentService
@@ -51,6 +51,7 @@ pub struct ProfileServices {
     pub performance_get_content: GetPerformanceContentService<GcsPerformanceContentRepositoryImpl>,
     pub performance_update_content: UpdatePerformanceContentService<PerformanceRepositoryImpl, GcsPerformanceContentRepositoryImpl>,
     pub performance_get_all: ListPerformancesService<PerformanceRepositoryImpl>,
+    pub performance_get_images: GetPerformanceImagesService<PerformanceRepositoryImpl, ImageRepositoryImpl>,
 }
 
 impl ProfileServices {
@@ -81,6 +82,7 @@ impl ProfileServices {
             performance_get_content: GetPerformanceContentService::new((), repos.profile.performance_content.clone()),
             performance_update_content: UpdatePerformanceContentService::new(repos.profile.performance.clone(), repos.profile.performance_content.clone()),
             performance_get_all: ListPerformancesService::new(repos.profile.performance.clone()),
+            performance_get_images: GetPerformanceImagesService::new(repos.profile.performance.clone(), repos.profile.image.clone()),
         }
     }
 }

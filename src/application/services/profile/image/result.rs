@@ -16,6 +16,7 @@ pub struct ImageResult {
     pub caption: Option<String>,
     pub created_at: String,
     pub usage_count: Option<i32>,
+    pub performances: Vec<PerformanceUsageInfo>,
 }
 
 #[derive(Debug, Clone, Serialize)]

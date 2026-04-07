@@ -25,8 +25,7 @@ impl IntoResponse for PerformanceResult {
 pub struct PerformanceUpdateResult {
     pub id: String,
     pub title: String,
-    pub images_added: usize,
-    pub images_removed: usize,
+    pub images_synced: usize,
     pub updated_at: String,
 }
 
@@ -75,8 +74,7 @@ impl IntoResponse for PerformanceContentResult {
 pub struct PerformanceContentUpdateResult {
     pub performance_id: String,
     pub content_url: String,
-    pub images_added: usize,
-    pub images_removed: usize,
+    pub images_synced: usize,
 }
 
 impl IntoResponse for PerformanceContentUpdateResult {
@@ -90,6 +88,7 @@ impl IntoResponse for PerformanceContentUpdateResult {
 }
 
 use crate::domain::entities::profile::performance::performance::Performance;
+use crate::application::services::profile::image::result::ImageResult;
 
 #[derive(Debug, Clone, Serialize)]
 pub struct PerformanceListResult {
@@ -97,6 +96,22 @@ pub struct PerformanceListResult {
 }
 
 impl IntoResponse for PerformanceListResult {
+    fn into_response(self) -> axum::response::Response {
+        (
+            axum::http::StatusCode::OK,
+            axum::Json(ApiResponse::success(self)),
+        )
+            .into_response()
+    }
+}
+
+#[derive(Debug, Clone, Serialize)]
+pub struct PerformanceImagesResult {
+    pub performance_id: String,
+    pub images: Vec<ImageResult>,
+}
+
+impl IntoResponse for PerformanceImagesResult {
     fn into_response(self) -> axum::response::Response {
         (
             axum::http::StatusCode::OK,

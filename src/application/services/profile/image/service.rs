@@ -52,7 +52,7 @@ where
 
         let images = images_data
             .into_iter()
-            .map(|(img, usage)| ImageResult {
+            .map(|(img, usage, perfs)| ImageResult {
                 id: img.id,
                 storage_url: img.storage_url,
                 filename: img.filename,
@@ -65,6 +65,13 @@ where
                 caption: img.caption,
                 created_at: img.created_at,
                 usage_count: Some(usage),
+                performances: perfs.into_iter().map(|p| PerformanceUsageInfo {
+                    performance_id: p.performance_id,
+                    title: p.title,
+                    usage_count: p.usage_count,
+                    first_used_at: p.first_used_at,
+                    last_used_at: p.last_used_at,
+                }).collect(),
             })
             .collect();
 
@@ -105,7 +112,7 @@ where
     async fn execute(&self, input: Self::Input) -> Result<Self::Output, Self::Error> {
         input.validate().map_err(|e| ApplicationError::ValidationError { message: e })?;
 
-        let (img, usage) = self
+        let (img, usage, perfs) = self
             .repository
             .find_by_id_and_profile_id(&input.id, &input.profile_id)
             .await
@@ -128,6 +135,13 @@ where
             caption: img.caption,
             created_at: img.created_at,
             usage_count: Some(usage),
+            performances: perfs.into_iter().map(|p| PerformanceUsageInfo {
+                performance_id: p.performance_id,
+                title: p.title,
+                usage_count: p.usage_count,
+                first_used_at: p.first_used_at,
+                last_used_at: p.last_used_at,
+            }).collect(),
         })
     }
 }
@@ -287,6 +301,7 @@ where
             caption: input.caption,
             created_at,
             usage_count: Some(0),
+            performances: vec![],
         })
     }
 }
@@ -444,7 +459,7 @@ where
         input.validate().map_err(|e| ApplicationError::ValidationError { message: e })?;
 
         // 1. Check if image exists and get metadata for GCS deletion
-        let (image, usage) = self.repository
+        let (image, usage, _) = self.repository
             .find_by_id_and_profile_id(&input.id, &input.profile_id)
             .await
             .map_app_err("Failed to check image existence")?
@@ -511,7 +526,7 @@ where
         input.validate().map_err(|e| ApplicationError::ValidationError { message: e })?;
 
         // 1. Check if image exists and get metadata for GCS deletion
-        let (image, _) = self.repository
+        let (image, _, _) = self.repository
             .find_by_id_and_profile_id(&input.id, &input.profile_id)
             .await
             .map_app_err("Failed to check image existence")?
@@ -588,6 +603,7 @@ where
             caption: img.caption,
             created_at: img.created_at,
             usage_count: Some(0),
+            performances: vec![],
         }).collect();
 
         Ok(UnusedImagesResult {

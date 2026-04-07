@@ -15,16 +15,14 @@ pub trait PerformanceRepository: Send + Sync {
     async fn delete(&self, id: &str) -> Result<(), RepositoryError>;
     
     // Image usage tracking
-    async fn track_image_usage(
+    async fn sync_image_usage(
         &self,
-        image_id: &str,
         performance_id: &str,
+        current_image_ids: &[String],
     ) -> Result<(), RepositoryError>;
-    async fn untrack_image_usage(
-        &self,
-        image_id: &str,
-        performance_id: &str,
-    ) -> Result<(), RepositoryError>;
-    async fn get_tracked_images(&self, performance_id: &str) -> Result<Vec<String>, RepositoryError>;
     async fn delete_image_usage_by_performance_id(&self, performance_id: &str) -> Result<(), RepositoryError>;
+    async fn find_images_by_performance_id(
+        &self,
+        performance_id: &str,
+    ) -> Result<Vec<crate::domain::entities::profile::image::image::Image>, RepositoryError>;
 }

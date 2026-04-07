@@ -1,8 +1,8 @@
 use axum::{Router, http::Method};
 use tower_http::catch_panic::CatchPanicLayer;
 use tower_http::cors::{Any, CorsLayer};
-use crate::delivery::http::routes::public::public::public_v1_routes;
-use crate::delivery::http::routes::private::private_v1_routes;
+use crate::delivery::http::routes::v1::public::public_v1_routes;
+use crate::delivery::http::routes::v1::private::private_v1_routes;
 use crate::delivery::http::routes::auth::auth_routes;
 use crate::delivery::http::server::state::AppState;
 use crate::interface_adapters::http::v1::presenters::common::fallback_handler::fallback_handler;
